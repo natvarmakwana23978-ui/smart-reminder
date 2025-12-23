@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v4 # લેટેસ્ટ વર્ઝન v4 વાપર્યું છે
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -23,40 +23,33 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
-    # ફાઈલને ચલાવવા માટેની પરમિશન આપવી
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # APK બનાવવાનું સ્ટેપ
-    - name: Build with Gradle
+    # ફેરફાર: અહીં આપણે ગ્રેડલને 'app' ફોલ્ડરની અંદર કામ કરવા કહીએ છીએ
+    - name: Build APK
       run: ./gradlew assembleDebug
+      working-directory: . 
+      # જો તમારી settings.gradle ફાઈલ 'app' ફોલ્ડરની અંદર હોય, 
+      # તો ઉપરની લાઈનમાં '.' ને બદલે './app' લખજો.
 
-    # બનેલી APK ને Artifact તરીકે સેવ કરવી (ડાઉનલોડ કરવા માટે)
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: indian-calendar-app-apk
-        path: app/build/outputs/apk/debug/*.apk
+        path: "**/build/outputs/apk/debug/*.apk" # આખા પ્રોજેક્ટમાં જ્યાં પણ APK હોય તે શોધી લેશે
         retention-days: 5
 
-    # ઓટોમેટિક રીલીઝ બનાવવું (જ્યારે તમે મેઈન બ્રાન્ચ પર પુશ કરો ત્યારે)
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
       with:
-        files: app/build/outputs/apk/debug/app-debug.apk
+        files: "**/build/outputs/apk/debug/app-debug.apk"
         tag_name: v1.0.${{ github.run_number }}
         name: Release v1.0.${{ github.run_number }}
         body: |
           ભારતીય કેલેન્ડર એપ - વિક્રમ સંવત 2082
-          
-          ફિચર્સ:
-          • ગ્રેગોરિયન કેલેન્ડર
-          • વિક્રમ સંવત
-          • તહેવારો અને વિશેષ દિવસો
-          • બિલ્ડ નંબર: ${{ github.run_number }}
         draft: false
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
