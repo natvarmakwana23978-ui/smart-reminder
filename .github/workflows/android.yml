@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up JDK 17
       uses: actions/setup-java@v3
@@ -20,8 +20,21 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    # 🔥 નવો સ્ટેપ: જૂની gradle-wrapper.jar ડિલીટ
+    - name: Clean old gradle wrapper
+      run: |
+        rm -f gradle/wrapper/gradle-wrapper.jar
+        echo "Old gradle-wrapper.jar removed"
+
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
+
+    # 🔥 નવો સ્ટેપ: નવી gradle-wrapper જનરેટ
+    - name: Generate Gradle Wrapper
+      run: |
+        chmod +x ./gradlew
+        ./gradlew wrapper --gradle-version=8.0
+        echo "New gradle-wrapper.jar generated"
 
     - name: Build APK
       run: |
@@ -32,13 +45,10 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: indian-calendar-app
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: app/build/outputs/apk/debug/
+        retention-days: 5
 
-    - name: Generate APK Download Badge
-      run: |
-        echo "APK બની ગયું છે!" > apk-status.txt
-        
-    - name: Upload APK to Release
+    - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
       with:
@@ -46,14 +56,12 @@ jobs:
         tag_name: v1.0.${{ github.run_number }}
         name: Release v1.0.${{ github.run_number }}
         body: |
-          ભારતીય કેલેન્ડર એપ
-          
-          નવીનતમ APK ડાઉનલોડ કરો.
+          ભારતીય કેલેન્ડર એપ - વિક્રમ સંવત 2082
           
           ફિચર્સ:
           • ગ્રેગોરિયન કેલેન્ડર
           • વિક્રમ સંવત
-          • આજના તહેવારો
-          • રીમાઇન્ડર્સ (જલ્દી આવી રહ્યું છે)
+          • તહેવારો અને વિશેષ દિવસો
+          • રીમાઇન્ડર સિસ્ટમ (આવનારા અપડેટમાં)
         draft: false
         prerelease: false
