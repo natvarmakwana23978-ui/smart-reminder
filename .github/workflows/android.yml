@@ -23,22 +23,17 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
-    - name: Grant execute permission for gradlew
+    - name: Grant execute permission
       run: chmod +x gradlew
 
-    # ફેરફાર: અહીં આપણે ગ્રેડલને 'app' ફોલ્ડરની અંદર કામ કરવા કહીએ છીએ
     - name: Build APK
       run: ./gradlew assembleDebug
-      working-directory: . 
-      # જો તમારી settings.gradle ફાઈલ 'app' ફોલ્ડરની અંદર હોય, 
-      # તો ઉપરની લાઈનમાં '.' ને બદલે './app' લખજો.
 
-    - name: Upload APK
+    - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: indian-calendar-app-apk
-        path: "**/build/outputs/apk/debug/*.apk" # આખા પ્રોજેક્ટમાં જ્યાં પણ APK હોય તે શોધી લેશે
-        retention-days: 5
+        name: Indian-Calendar-APK
+        path: "**/build/outputs/apk/debug/*.apk"
 
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -47,9 +42,7 @@ jobs:
         files: "**/build/outputs/apk/debug/app-debug.apk"
         tag_name: v1.0.${{ github.run_number }}
         name: Release v1.0.${{ github.run_number }}
-        body: |
-          ભારતીય કેલેન્ડર એપ - વિક્રમ સંવત 2082
-        draft: false
-        prerelease: false
+        body: "ભારતીય કેલેન્ડર એપ - નવું અપડેટ"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
