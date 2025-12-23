@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id("com.android.application") version "8.0.0"
+    id("org.jetbrains.kotlin.android") version "1.8.10"
 }
 
 android {
@@ -42,8 +42,6 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    
-    // For JSON parsing
     implementation("org.json:json:20230227")
     
     testImplementation("junit:junit:4.13.2")
