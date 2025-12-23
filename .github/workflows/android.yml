@@ -1,1 +1,59 @@
+name: Android CI
 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Build APK
+      run: |
+        chmod +x ./gradlew
+        ./gradlew assembleDebug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: indian-calendar-app
+        path: app/build/outputs/apk/debug/app-debug.apk
+
+    - name: Generate APK Download Badge
+      run: |
+        echo "APK બની ગયું છે!" > apk-status.txt
+        
+    - name: Upload APK to Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: app/build/outputs/apk/debug/app-debug.apk
+        tag_name: v1.0.${{ github.run_number }}
+        name: Release v1.0.${{ github.run_number }}
+        body: |
+          ભારતીય કેલેન્ડર એપ
+          
+          નવીનતમ APK ડાઉનલોડ કરો.
+          
+          ફિચર્સ:
+          • ગ્રેગોરિયન કેલેન્ડર
+          • વિક્રમ સંવત
+          • આજના તહેવારો
+          • રીમાઇન્ડર્સ (જલ્દી આવી રહ્યું છે)
+        draft: false
+        prerelease: false
