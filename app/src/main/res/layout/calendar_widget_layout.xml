@@ -1,71 +1,97 @@
-package com.indian-calendar-app
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="horizontal"
+    android:weightSum="2">
 
-import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
-import android.content.Context
-import android.widget.RemoteViews
-import org.json.JSONArray
-import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#FFF5F5"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-class CalendarWidget : AppWidgetProvider() {
+        <TextView
+            android:id="@+id/txt_v_samvat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="વિ.સં. ૨૦૮૨"
+            android:textColor="#D32F2F"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
-        }
-    }
+        <TextView
+            android:id="@+id/txt_tithi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="૧"
+            android:textColor="#333333"
+            android:textSize="44sp"
+            android:textStyle="bold" />
 
-    private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-        val views = RemoteViews(context.packageName, R.layout.calendar_widget_layout)
+        <TextView
+            android:id="@+id/txt_guj_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="પોષ સુદ"
+            android:textColor="#D32F2F"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-        // ૧. ગ્રેગોરિયન તારીખ સેટ કરવી (જમણું બોક્સ)
-        val fullDate = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date())
-        val dateOnly = SimpleDateFormat("dd", Locale.getDefault()).format(Date())
-        val monthEng = SimpleDateFormat("MMMM", Locale.ENGLISH).format(Date())
-        val yearEng = SimpleDateFormat("yyyy", Locale.getDefault()).format(Date())
+        <TextView
+            android:id="@+id/txt_guj_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="બુધવાર"
+            android:textColor="#555555"
+            android:textSize="12sp" />
+    </LinearLayout>
 
-        views.setTextViewText(R.id.txt_date, dateOnly)
-        views.setTextViewText(R.id.txt_month_eng, monthEng)
-        views.setTextViewText(R.id.txt_year, "A.D. $yearEng")
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#EEEEEE" />
 
-        // ૨. JSON માંથી ગુજરાતી ડેટા મેળવવો (ડાબું બોક્સ)
-        val todayData = getTodayJsonData(context, fullDate)
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="#F0F4C3"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        if (todayData != null) {
-            val tithiWithNo = todayData.getString("Tithi") // "વદ-૧૩"
-            val monthGuj = todayData.getString("Month")   // "માગશર"
-            val dayGuj = todayData.getString("Day")       // "બુધવાર"
+        <TextView
+            android:id="@+id/txt_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2025"
+            android:textColor="#1976D2"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
-            // તિથિમાંથી ફક્ત નંબર અલગ પાડવો હોય તો (વદ-૧૩ માંથી ૧૩)
-            val tithiNo = tithiWithNo.split("-").lastOrNull() ?: tithiWithNo
+        <TextView
+            android:id="@+id/txt_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="24"
+            android:textColor="#333333"
+            android:textSize="44sp"
+            android:textStyle="bold" />
 
-            views.setTextViewText(R.id.txt_tithi, tithiNo)
-            views.setTextViewText(R.id.txt_guj_month, "$monthGuj $tithiWithNo")
-            views.setTextViewText(R.id.txt_guj_day, dayGuj)
-        }
+        <TextView
+            android:id="@+id/txt_month_eng"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="December"
+            android:textColor="#1976D2"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-        appWidgetManager.updateAppWidget(appWidgetId, views)
-    }
-
-    private fun getTodayJsonData(context: Context, todayDate: String): JSONObject? {
-        return try {
-            val inputStream = context.assets.open("calendar_data.json")
-            val jsonString = inputStream.bufferedReader().use { it.readText() }
-            val jsonArray = JSONArray(jsonString)
-
-            for (i in 0 until jsonArray.length()) {
-                val obj = jsonArray.getJSONObject(i)
-                if (obj.getString("Date") == todayDate) {
-                    return obj
-                }
-            }
-            null
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-}
+</LinearLayout>
 
