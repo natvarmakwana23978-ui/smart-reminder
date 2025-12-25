@@ -24,7 +24,7 @@ class CalendarWidget : AppWidgetProvider() {
         thread {
             try {
                 // તમારા ગિટહબ JSON ની RAW લિંક (અહીં તમારી સાચી લિંક મૂકવી)
-                val jsonUrl = "https://github.com/natvarmakwana23978-ui/indian-calendar-app/tree/main/app/src/main/assets/json"
+                val jsonUrl = "https://github.com/natvarmakwana23978-ui/indian-calendar-app/blob/main/app/src/main/assets/json/calendar_2082.json"
                 val jsonText = URL(jsonUrl).readText()
                 val jsonArray = JSONArray(jsonText)
 
