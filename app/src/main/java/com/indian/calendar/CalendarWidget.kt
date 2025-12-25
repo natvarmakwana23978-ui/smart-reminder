@@ -8,7 +8,8 @@ import org.json.JSONArray
 import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import kotlin.concurrent.thread
 
 class CalendarWidget : AppWidgetProvider() {
@@ -23,16 +24,14 @@ class CalendarWidget : AppWidgetProvider() {
 
         thread {
             try {
-                // તમારી સાચી Raw GitHub લિંક
+                // તમારી Raw JSON લિંક
                 val jsonUrl = "https://raw.githubusercontent.com/natvarmakwana23978-ui/indian-calendar-app/main/app/src/main/assets/json/calendar_2082.json"
                 
                 val url = URL(jsonUrl)
                 val connection = url.openConnection() as HttpURLConnection
-                
-                // આ લાઈન ગિટહબ સુરક્ષા પાસ કરવા માટે જરૂરી છે
                 connection.setRequestProperty("User-Agent", "Mozilla/5.0")
-                connection.connectTimeout = 10000 // 10 સેકન્ડ વેટ કરશે
-                connection.readTimeout = 10000
+                connection.connectTimeout = 15000
+                connection.readTimeout = 15000
 
                 val jsonText = connection.inputStream.bufferedReader().use { it.readText() }
                 val jsonArray = JSONArray(jsonText)
@@ -57,17 +56,13 @@ class CalendarWidget : AppWidgetProvider() {
 
                 if (!found) {
                     views.setTextViewText(R.id.widget_date_text, "ડેટા નથી ($currentDate)")
-                    views.setTextViewText(R.id.widget_festival_text, "તારીખ ચેક કરો")
                 }
 
                 appWidgetManager.updateAppWidget(appWidgetId, views)
 
             } catch (e: Exception) {
-                // જો નેટ સ્લો હોય કે કોઈ એરર હોય
                 views.setTextViewText(R.id.widget_date_text, "લોડિંગ ભૂલ...")
-                views.setTextViewText(R.id.widget_festival_text, "નેટ કનેક્શન તપાસો")
                 appWidgetManager.updateAppWidget(appWidgetId, views)
-                e.printStackTrace()
             }
         }
     }
