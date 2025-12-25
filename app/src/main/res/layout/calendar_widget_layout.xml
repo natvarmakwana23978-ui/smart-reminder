@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#FFFFFF"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="10dp">
 
-    <TextView android:id="@+id/txt_eng_date" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#2C3E50" android:textSize="18sp" android:textStyle="bold" />
-    <TextView android:id="@+id/txt_event_top" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#E74C3C" android:textSize="14sp" />
-    <TextView android:id="@+id/txt_event_note" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#7F8C8D" android:textSize="12sp" android:layout_marginBottom="8dp"/>
-    
-    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#D5D8DC" android:layout_marginVertical="4dp"/>
-    
-    <TextView android:id="@+id/txt_guj_tithi" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#1E8449" android:textSize="16sp" android:textStyle="bold" />
-    <TextView android:id="@+id/txt_guj_event" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#2E4053" android:textSize="14sp" />
-    <TextView android:id="@+id/txt_birthday_wish" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#884EA0" android:textSize="12sp" android:textStyle="italic" />
+    <TextView
+        android:id="@+id/widget_date_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/widget_festival_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="14sp" />
 </LinearLayout>
