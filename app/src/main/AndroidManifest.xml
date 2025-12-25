@@ -25,18 +25,15 @@
             </intent-filter>
         </activity>
 
-        <receiver 
-            android:name=".CalendarWidget" 
-            android:exported="false"
-            android:label="ભારતીય કેલેન્ડર વિજેટ">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/calendar_widget_info" />
-        </receiver>
+        <receiver android:name=".CalendarWidget" android:exported="true">
+    <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+    </intent-filter>
+    <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/calendar_widget_info" />
+</receiver>
+
 
     </application>
 
