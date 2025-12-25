@@ -3,6 +3,7 @@ package com.indian.calendar
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.indian.calendar.R
 import org.json.JSONArray
 import java.text.SimpleDateFormat
 import java.util.*
@@ -13,21 +14,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // UI Elements (તમારી activity_main.xml મુજબના ID)
-        val tvGregorianDate = findViewById<TextView>(R.id.tv_gregorian_date)
-        val tvVikramSamvat = findViewById<TextView>(R.id.tv_vikram_samvat)
-        val tvSpecialDay = findViewById<TextView>(R.id.tv_special_day)
+        // તમારા XML લેઆઉટ મુજબના IDs
+        val txtGregorianDate = findViewById<TextView>(R.id.txtGregorianDate)
+        val txtGregorianDay = findViewById<TextView>(R.id.txtGregorianDay)
+        val txtVikramDate = findViewById<TextView>(R.id.txtVikramDate)
+        val txtSpecialDay = findViewById<TextView>(R.id.txtSpecialDay)
+        val txtTodayEvents = findViewById<TextView>(R.id.txtTodayEvents)
 
         // આજના દિવસની તારીખ મેળવો
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val currentDate = sdf.format(Date())
         
-        // ગ્રેગોરિયન તારીખ ડિસ્પ્લે કરવા માટે
-        val displayFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-        tvGregorianDate.text = displayFormat.format(Date())
+        // ગ્રેગોરિયન તારીખ અને વાર ડિસ્પ્લે કરવા માટે
+        val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+        val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
+        
+        txtGregorianDate.text = dateFormat.format(Date())
+        txtGregorianDay.text = dayFormat.format(Date())
 
         try {
-            // Assets માંથી JSON વાંચવા માટે
+            // Assets માંથી JSON ફાઈલ વાંચવા માટે
             val inputStream = assets.open("json/calendar_2082.json")
             val jsonText = inputStream.bufferedReader().use { it.readText() }
             val jsonArray = JSONArray(jsonText)
@@ -36,10 +42,18 @@ class MainActivity : AppCompatActivity() {
             for (i in 0 until jsonArray.length()) {
                 val obj = jsonArray.getJSONObject(i)
                 if (obj.getString("Date") == currentDate) {
-                    tvVikramSamvat.text = obj.getString("Vikram_Samvat")
+                    // વિક્રમ સંવત સેટ કરો
+                    txtVikramDate.text = obj.getString("Vikram_Samvat")
                     
+                    // ખાસ દિવસની વિગત
                     val special = obj.getString("Special_Day")
-                    tvSpecialDay.text = if (special == "--") "આજે કોઈ ખાસ વિગત નથી" else special
+                    if (special == "--") {
+                        txtSpecialDay.text = ""
+                        txtTodayEvents.text = "આજની તારીખ માટે કોઈ ખાસ વિગત ઉપલબ્ધ નથી."
+                    } else {
+                        txtSpecialDay.text = special
+                        txtTodayEvents.text = "આજે $special છે."
+                    }
                     
                     found = true
                     break
@@ -47,15 +61,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (!found) {
-                tvVikramSamvat.text = "ડેટા ઉપલબ્ધ નથી"
-                tvSpecialDay.text = "આ તારીખ માટે માહિતી મળી નથી ($currentDate)"
+                txtVikramDate.text = "ડેટા મળ્યો નથી"
+                txtTodayEvents.text = "આ તારીખ માટે ડેટાબેઝમાં માહિતી નથી ($currentDate)"
             }
 
         } catch (e: Exception) {
-            tvVikramSamvat.text = "ભૂલ: ફાઇલ મળી નથી"
-            tvSpecialDay.text = "Assets ચેક કરો"
+            txtVikramDate.text = "ફાઈલ એરર!"
+            txtTodayEvents.text = "Assets ફોલ્ડરમાં JSON ફાઈલ તપાસો."
             e.printStackTrace()
         }
     }
 }
-
