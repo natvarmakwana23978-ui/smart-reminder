@@ -1,4 +1,4 @@
-package com.your.package.name // અહીં તમારું એક્ચ્યુઅલ પેકેજ નામ લખેલું જ હશે
+package com.natvarmakwana23978_ui.indian_calendar_app
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -19,28 +19,29 @@ class CalendarWidget : AppWidgetProvider() {
     private fun updateWidgetData(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
         val views = RemoteViews(context.packageName, R.layout.calendar_widget_layout)
         
-        // ગીટહબ JSON લિંક (જાન્યુઆરી ૨૦૨૬ ડેટા)
-        val jsonUrl = "https://raw.githubusercontent.com/user/repo/main/calendar_jan_2026.json"
+        // તમારી GitHub JSON Raw Link
+        val jsonUrl = "https://raw.githubusercontent.com/natvarmakwana23978-ui/indian-calendar-app/main/app/src/main/assets/json/calendar_2082.json"
 
         thread {
             try {
                 val rawJson = URL(jsonUrl).readText()
                 val jsonArray = JSONArray(rawJson)
                 
-                // ડેટા મેપિંગ - તમારા JSON ના કી-નામ મુજબ
-                val data = jsonArray.getJSONObject(0) // ટેસ્ટિંગ માટે પહેલી એન્ટ્રી
+                // હાલ પૂરતું ટેસ્ટિંગ માટે જાન્યુઆરી ૧, ૨૦૨૬ નો ડેટા (Index 0) લઈએ છીએ
+                val data = jsonArray.getJSONObject(0)
 
-                views.setTextViewText(R.id.txt_eng_date, data.optString("eng_date"))
-                views.setTextViewText(R.id.txt_event_top, data.optString("event_title"))
-                views.setTextViewText(R.id.txt_event_note, data.optString("event_note"))
-                views.setTextViewText(R.id.txt_guj_tithi, data.optString("guj_tithi"))
-                views.setTextViewText(R.id.txt_guj_event, data.optString("guj_event"))
-                views.setTextViewText(R.id.txt_birthday_wish, data.optString("wish_note"))
+                // JSON Keys: Date, Vikram_Samvat, Special_Day, Saka વગેરે
+                views.setTextViewText(R.id.txt_eng_date, data.optString("Date"))
+                views.setTextViewText(R.id.txt_event_top, data.optString("Special_Day"))
+                views.setTextViewText(R.id.txt_event_note, "Saka: " + data.optString("Saka"))
+                
+                views.setTextViewText(R.id.txt_guj_tithi, data.optString("Vikram_Samvat"))
+                views.setTextViewText(R.id.txt_guj_event, data.optString("Special_Day"))
+                views.setTextViewText(R.id.txt_birthday_wish, "Happy Birthday Gemini!") // હાલ સ્ટેટિક
 
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             } catch (e: Exception) {
-                // લોડ ન થાય તો ડિફોલ્ટ મેસેજ
-                views.setTextViewText(R.id.txt_event_top, "ડેટા લોડ થઈ શક્યો નથી")
+                views.setTextViewText(R.id.txt_event_top, "Error: JSON લોડ થયો નથી")
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             }
         }
