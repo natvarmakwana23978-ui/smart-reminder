@@ -13,44 +13,36 @@ import java.util.Locale
 class CalendarWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
-        }
-    }
+            val views = RemoteViews(context.packageName, R.layout.calendar_widget_layout)
+            
+            try {
+                val inputStream = context.assets.open("json/calendar_2082.json")
+                val jsonText = inputStream.bufferedReader().use { it.readText() }
+                val jsonArray = JSONArray(jsonText)
 
-    private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-        val views = RemoteViews(context.packageName, R.layout.calendar_widget_layout)
+                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val currentDate = sdf.format(Date())
+                val dayName = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date())
 
-        try {
-            // મોબાઇલમાં ઇન્સ્ટોલ થયેલી એસેટ્સ ફાઇલ ખોલવા માટે
-            val inputStream = context.assets.open("json/calendar_2082.json")
-            val jsonText = inputStream.bufferedReader().use { it.readText() }
-            val jsonArray = JSONArray(jsonText)
-
-            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val currentDate = sdf.format(Date())
-
-            var found = false
-            for (i in 0 until jsonArray.length()) {
-                val obj = jsonArray.getJSONObject(i)
-                if (obj.getString("Date") == currentDate) {
-                    views.setTextViewText(R.id.widget_date_text, obj.getString("Vikram_Samvat"))
-                    val special = obj.getString("Special_Day")
-                    views.setTextViewText(R.id.widget_festival_text, if (special == "--") "" else special)
-                    found = true
-                    break
+                for (i in 0 until jsonArray.length()) {
+                    val obj = jsonArray.getJSONObject(i)
+                    if (obj.getString("Date") == currentDate) {
+                        // લાઈન ૧: હિબ્રુ તારીખ અને વાર
+                        views.setTextViewText(R.id.widget_date_text, "${obj.getString("Jewish")} ($dayName)")
+                        
+                        // લાઈન ૨: તહેવાર
+                        val special = obj.getString("Special_Day")
+                        views.setTextViewText(R.id.widget_festival_text, if (special == "--") "" else special)
+                        
+                        // લાઈન ૩: રીમાઇન્ડર (અત્યારે સ્ટેટિક ટેસ્ટિંગ માટે)
+                        views.setTextViewText(R.id.widget_reminder_text, "રીમાઇન્ડર: આજે સમયસર દવા લેવી")
+                        break
+                    }
                 }
+            } catch (e: Exception) {
+                views.setTextViewText(R.id.widget_date_text, "Error")
             }
-
-            if (!found) {
-                views.setTextViewText(R.id.widget_date_text, "ડેટા નથી ($currentDate)")
-                views.setTextViewText(R.id.widget_festival_text, "")
-            }
-
-        } catch (e: Exception) {
-            views.setTextViewText(R.id.widget_date_text, "ફાઇલ મળી નથી!")
-            views.setTextViewText(R.id.widget_festival_text, "Assets ચેક કરો")
+            appWidgetManager.updateAppWidget(appWidgetId, views)
         }
-
-        appWidgetManager.updateAppWidget(appWidgetId, views)
     }
 }
