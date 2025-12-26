@@ -81,15 +81,14 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="#E74C3C"
-                android:layout_bottom="10dp" />
+                android:layout_marginBottom="10dp" />
 
             <TextView
                 android:id="@+id/txtVikramDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="લોડિંગ..."
-                android:textSize="16sp"
-                android:layout_marginTop="10dp" />
+                android:textSize="16sp" />
 
         </LinearLayout>
 
