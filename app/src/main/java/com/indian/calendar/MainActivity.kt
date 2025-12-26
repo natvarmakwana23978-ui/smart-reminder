@@ -1,6 +1,9 @@
 package com.indian.calendar
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -24,20 +27,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // XML માંથી વ્યૂઝને લિંક કરો
+        // વ્યૂ લિંક કરવા
         txtGregorianDate = findViewById(R.id.txtGregorianDate)
         txtSelectedCalendarDate = findViewById(R.id.txtVikramDate)
         txtSpecialDay = findViewById(R.id.txtSpecialDay)
         calendarSpinner = findViewById(R.id.calendarSpinner)
 
-        // તમારી JSON ફાઈલ મુજબની કી (Keys)
+        // ૧૦ મુખ્ય કેલેન્ડર લિસ્ટ (તમારા JSON ની કી મુજબ)
         val calendars = arrayOf("Vikram_Samvat", "Jewish", "Hijri", "Saka", "Parsi", "Sikh")
         
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, calendars)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         calendarSpinner.adapter = adapter
 
-        // અગાઉ પસંદ કરેલું કેલેન્ડર યાદ રાખવા માટે
+        // સેવ કરેલી પસંદગી લોડ કરવી
         val sharedPref = getSharedPreferences("CalendarPrefs", Context.MODE_PRIVATE)
         val savedPos = sharedPref.getInt("selected_pos", 0)
         calendarSpinner.setSelection(savedPos)
@@ -46,11 +49,17 @@ class MainActivity : AppCompatActivity() {
 
         calendarSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                // પસંદગી સાચવી લો
-                sharedPref.edit().putInt("selected_pos", position).apply()
-                sharedPref.edit().putString("selected_key", calendars[position]).apply()
+                val selectedKey = calendars[position]
                 
-                updateUI(calendars[position])
+                // પસંદગી સેવ કરવી
+                sharedPref.edit().putInt("selected_pos", position).apply()
+                sharedPref.edit().putString("selected_key", selectedKey).apply()
+                
+                // UI અપડેટ કરવું
+                updateUI(selectedKey)
+                
+                // વિજેટને અપડેટ કરવા માટેનો આદેશ (Broadcast)
+                updateWidgetNow()
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
@@ -72,31 +81,33 @@ class MainActivity : AppCompatActivity() {
                 val obj = it.getJSONObject(i)
                 if (obj.getString("Date") == currentDate) {
                     
-                    // ૧. ગ્રેગોરિયન તારીખ (ભાષા લોજિક)
+                    // અંગ્રેજી તારીખ
                     val lang = if (selectedKey == "Vikram_Samvat") Locale("gu") else Locale.US
-                    val sdfGregorian = SimpleDateFormat("dd MMMM yyyy (EEEE)", lang)
-                    txtGregorianDate.text = sdfGregorian.format(Date())
+                    txtGregorianDate.text = SimpleDateFormat("dd MMMM yyyy (EEEE)", lang).format(Date())
 
-                    // ૨. પસંદ કરેલ કેલેન્ડરનો ડેટા અને અંકોનું પરિવર્તન
+                    // લોકલ કેલેન્ડર ડેટા + ટ્રાન્સલેશન
                     var rawData = obj.getString(selectedKey)
                     if (selectedKey != "Vikram_Samvat") {
-                        rawData = translateDigitsToEnglish(rawData)
+                        rawData = rawData.replace("૧", "1").replace("૨", "2").replace("૩", "3")
+                            .replace("૪", "4").replace("૫", "5").replace("૬", "6")
+                            .replace("૭", "7").replace("૮", "8").replace("૯", "9").replace("૦", "0")
                     }
                     txtSelectedCalendarDate.text = rawData
 
-                    // ૩. વિશેષ દિવસ
-                    val special = obj.getString("Special_Day")
-                    txtSpecialDay.text = if (special == "--") "તપાસી રહ્યું છે..." else "આજે $special છે."
+                    // તહેવાર
+                    txtSpecialDay.text = obj.getString("Special_Day")
                     break
                 }
             }
         }
     }
 
-    private fun translateDigitsToEnglish(input: String): String {
-        return input.replace("૧", "1").replace("૨", "2")
-            .replace("૩", "3").replace("૪", "4").replace("૫", "5")
-            .replace("૬", "6").replace("૭", "7").replace("૮", "8")
-            .replace("૯", "9").replace("૦", "0")
+    private fun updateWidgetNow() {
+        val intent = Intent(this, CalendarWidget::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val ids = AppWidgetManager.getInstance(application).getAppWidgetIds(ComponentName(application, CalendarWidget::class.java))
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        sendBroadcast(intent)
     }
 }
+
