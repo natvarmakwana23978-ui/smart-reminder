@@ -17,13 +17,12 @@ class CalendarWidget : AppWidgetProvider() {
 
     companion object {
         fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
-            val views = RemoteViews(context.packageName, R.layout.calendar_widget_layout)
+            // અહીં આપણે નવું નામ 'widget_royal_layout' વાપર્યું છે
+            val views = RemoteViews(context.packageName, R.layout.widget_royal_layout)
 
-            // ૧. એપની પસંદગી મુજબ કેલેન્ડર કી મેળવો
             val sharedPref = context.getSharedPreferences("CalendarPrefs", Context.MODE_PRIVATE)
             val selectedKey = sharedPref.getString("selected_key", "Vikram_Samvat") ?: "Vikram_Samvat"
 
-            // ૨. આજની તારીખ અને ભાષા સેટિંગ
             val lang = if (selectedKey == "Vikram_Samvat") Locale("gu") else Locale.US
             val englishDateStr = SimpleDateFormat("dd MMM yyyy (EEEE)", lang).format(Date())
 
@@ -37,7 +36,6 @@ class CalendarWidget : AppWidgetProvider() {
                     val obj = jsonArray.getJSONObject(i)
                     if (obj.getString("Date") == currentDate) {
                         
-                        // ૩. અંકોનું ટ્રાન્સલેશન (જો ગુજરાતી સિવાયનું કેલેન્ડર હોય)
                         var localData = obj.getString(selectedKey)
                         if (selectedKey != "Vikram_Samvat") {
                             localData = localData.replace("૧", "1").replace("૨", "2").replace("૩", "3")
@@ -45,15 +43,12 @@ class CalendarWidget : AppWidgetProvider() {
                                 .replace("૭", "7").replace("૮", "8").replace("૯", "9").replace("૦", "0")
                         }
                         
-                        // વિજેટ લાઈન ૧: અંગ્રેજી + લોકલ તારીખ
                         views.setTextViewText(R.id.widget_date_text, "$englishDateStr\n$localData")
 
-                        // લાઈન ૨: તહેવાર
                         val special = obj.getString("Special_Day")
                         views.setTextViewText(R.id.widget_festival_text, if (special == "--") "" else special)
 
-                        // લાઈન ૩: રીમાઇન્ડર (તમારો સ્ટેટિક મેસેજ)
-                        views.setTextViewText(R.id.widget_reminder_text, "રીમાઇન્ડર: ડેટા ટેસ્ટિંગ શરૂ છે")
+                        // આપણે અહીં રીમાઇન્ડર ટેક્સ્ટની લાઇન કાઢી નાખી છે જેથી એરર ન આવે
                         break
                     }
                 }
