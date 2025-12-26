@@ -3,31 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="12dp"
+    android:padding="16dp"
     android:gravity="center"
-    android:background="@android:color/holo_red_dark"> <TextView
+    android:background="#CC000000"> <TextView
         android:id="@+id/widget_date_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
-        android:textSize="17sp"
+        android:textColor="#FFD700"
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:gravity="center" />
+        android:gravity="center"
+        android:shadowColor="#000000"
+        android:shadowRadius="3.0" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1.5dp"
+        android:layout_height="2dp"
         android:background="#FFD700"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
 
     <TextView
         android:id="@+id/widget_festival_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#FFEB3B"
-        android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
         android:gravity="center"
-        android:textStyle="bold|italic" />
-</LinearLayout>
+        android:textStyle="italic" />
 
+</LinearLayout>
