@@ -17,45 +17,60 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val spinner: Spinner = findViewById(R.id.calendar_spinner)
         val sharedPref = getSharedPreferences("CalendarPrefs", Context.MODE_PRIVATE)
 
-        // કેલેન્ડરના વિકલ્પો અને તેની Key
-        val calendarOptions = arrayOf("વિક્રમ સંવત", "શક સંવત", "હિજરી", "નાનકશાહી", "ચાઈનીઝ")
-        val calendarKeys = arrayOf("vikram_samvat", "shaka_samvat", "hijri", "nanakshahi", "chinese")
+        // ૧. કેલેન્ડર સ્પિનર સેટઅપ
+        val calSpinner: Spinner = findViewById(R.id.calendar_spinner)
+        val calOptions = arrayOf("વિક્રમ સંવત", "શક સંવત", "હિજરી", "નાનકશાહી", "ચાઈનીઝ")
+        val calKeys = arrayOf("vikram_samvat", "shaka_samvat", "hijri", "nanakshahi", "chinese")
+        
+        val calAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, calOptions)
+        calAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        calSpinner.adapter = calAdapter
 
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, calendarOptions)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
+        // ૨. ભાષા સ્પિનર સેટઅપ
+        val langSpinner: Spinner = findViewById(R.id.language_spinner)
+        val langOptions = arrayOf("English", "ગુજરાતી", "Hindi")
+        val langCodes = arrayOf("en", "gu", "hi")
+        
+        val langAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, langOptions)
+        langAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        langSpinner.adapter = langAdapter
 
         // અગાઉનું સિલેક્શન લોડ કરો
-        val savedKey = sharedPref.getString("selected_key", "vikram_samvat")
-        val savedIndex = calendarKeys.indexOf(savedKey)
-        if (savedIndex != -1) {
-            spinner.setSelection(savedIndex)
+        val savedCal = sharedPref.getString("selected_key", "vikram_samvat")
+        calSpinner.setSelection(calKeys.indexOf(savedCal))
+
+        val savedLang = sharedPref.getString("selected_language", "gu")
+        langSpinner.setSelection(langCodes.indexOf(savedLang))
+
+        // કેલેન્ડર બદલવા માટેનું લોજિક
+        calSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
+                sharedPref.edit().putString("selected_key", calKeys[pos]).commit()
+                updateWidget()
+            }
+            override fun onNothingSelected(p: AdapterView<*>?) {}
         }
 
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selectedKey = calendarKeys[position]
-                
-                // ડેટા સેવ કરો (commit વાપરીને જેથી તરત લખાય)
-                val editor = sharedPref.edit()
-                editor.putString("selected_key", selectedKey)
-                editor.commit()
-
-                // વિજેટને તરત અપડેટ કરવા માટેનો આદેશ
-                val intent = Intent(this@MainActivity, CalendarWidget::class.java)
-                intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-                val ids = AppWidgetManager.getInstance(application).getAppWidgetIds(
-                    ComponentName(application, CalendarWidget::class.java)
-                )
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-                sendBroadcast(intent)
+        // ભાષા બદલવા માટેનું લોજિક
+        langSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
+                sharedPref.edit().putString("selected_language", langCodes[pos]).commit()
+                updateWidget()
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onNothingSelected(p: AdapterView<*>?) {}
         }
     }
-}
 
+    // વિજેટને તરત જ રિફ્રેશ કરવાનું ફંક્શન
+    private fun updateWidget() {
+        val intent = Intent(this, CalendarWidget::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val ids = AppWidgetManager.getInstance(application).getAppWidgetIds(
+            ComponentName(application, CalendarWidget::class.java)
+        )
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        sendBroadcast(intent)
+    }
+}
