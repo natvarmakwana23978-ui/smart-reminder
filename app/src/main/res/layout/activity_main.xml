@@ -4,28 +4,38 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
-    android:gravity="center_horizontal">
+    android:background="#F5F5F5">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="તમારું કેલેન્ડર પસંદ કરો:"
-        android:textSize="18sp"
-        android:layout_marginBottom="10dp" />
+        android:text="Select Calendar / કેલેન્ડર પસંદ કરો"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#333333"/>
 
     <Spinner
         android:id="@+id/calendar_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="48dp" />
+        android:layout_marginTop="10dp"
+        android:background="@android:drawable/btn_dropdown"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="પસંદગી કર્યા પછી વિજેટ આપોઆપ અપડેટ થશે."
-        android:textSize="14sp"
-        android:textColor="#666666" />
+        android:text="Select Language / ભાષા પસંદ કરો"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginTop="30dp"
+        android:textColor="#333333"/>
+
+    <Spinner
+        android:id="@+id/language_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@android:drawable/btn_dropdown"/>
 
 </LinearLayout>
 
