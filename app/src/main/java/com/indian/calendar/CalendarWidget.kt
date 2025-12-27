@@ -16,13 +16,16 @@ class CalendarWidget : AppWidgetProvider() {
             "0" to "૦", "1" to "૧", "2" to "૨", "3" to "૩", "4" to "૪", "5" to "૫",
             "6" to "૬", "7" to "૭", "8" to "૮", "9" to "૯",
             "January" to "January", "February" to "February", "March" to "March",
+            "April" to "April", "May" to "May", "June" to "June",
+            "July" to "July", "August" to "August", "September" to "September",
+            "October" to "October", "November" to "November", "December" to "December",
             "Saturday" to "શનિવાર", "Sunday" to "રવિવાર", "Monday" to "સોમવાર",
             "Tuesday" to "મંગળવાર", "Wednesday" to "બુધવાર", "Thursday" to "ગુરુવાર",
             "Friday" to "શુક્રવાર",
             "Paush Sud" to "પોષ સુદ", "Paush Vad" to "પોષ વદ", "Paush Purnima" to "પોષ પૂનમ",
-            "New Year" -> "ખ્રિસ્તી નવું વર્ષ",
-            "Putrada Ekadashi" -> "પુત્રદા એકાદશી",
-            "Global Family Day" -> "વિશ્વ પરિવાર દિવસ"
+            "New Year" to "ખ્રિસ્તી નવું વર્ષ",
+            "Putrada Ekadashi" to "પુત્રદા એકાદશી",
+            "Global Family Day" to "વિશ્વ પરિવાર દિવસ"
         )
         var result = text
         map.forEach { (eng, local) -> result = result.replace(eng, local) }
@@ -34,7 +37,6 @@ class CalendarWidget : AppWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.widget_royal_layout)
             val sharedPref = context.getSharedPreferences("CalendarPrefs", Context.MODE_PRIVATE)
             
-            // સિલેક્શન લોડ કરો
             val selectedKey = sharedPref.getString("selected_key", "vikram_samvat") ?: "vikram_samvat"
             
             val calendar = Calendar.getInstance()
