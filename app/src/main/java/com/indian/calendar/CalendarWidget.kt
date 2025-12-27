@@ -33,6 +33,7 @@ class CalendarWidget : AppWidgetProvider() {
             val sharedPref = context.getSharedPreferences("CalendarPrefs", Context.MODE_PRIVATE)
             val selectedKey = sharedPref.getString("selected_key", "vikram_samvat") ?: "vikram_samvat"
             
+            // આજની તારીખ: 2025-12-27 [cite: 2025-12-27]
             val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
 
             try {
@@ -55,41 +56,31 @@ class CalendarWidget : AppWidgetProvider() {
                     val localText = "$prefix${translateToLocal(calObj.getString("year"))}, ${translateToLocal(calObj.getString("month"))}-${translateToLocal(calObj.getString("date"))}, ${translateToLocal(greg.getString("day"))}"
                     views.setTextViewText(R.id.widget_date_text, localText)
 
-                    // ૩. તહેવાર અને વિશેષ દિવસ (Flexible Logic)
+                    // ૩. તહેવાર અને વિશેષ દિવસ (Flexible Logic - એક જ TextView માં)
                     val festivals = dateData.getJSONArray("festivals")
                     val specials = dateData.getJSONArray("special_days")
                     
-                    var festName = ""
+                    val eventList = mutableListOf<String>()
+                    
                     for (i in 0 until festivals.length()) {
                         val f = festivals.getJSONObject(i)
                         if (f.getString("category") == selectedKey || f.getString("category") == "all") {
-                            festName = f.getString("name")
-                            break
+                            eventList.add(f.getString("name"))
                         }
                     }
 
-                    var specialName = ""
                     for (i in 0 until specials.length()) {
                         val s = specials.getJSONObject(i)
                         if (s.getString("category") == "all") {
-                            specialName = s.getString("name")
-                            break
+                            eventList.add(s.getString("name"))
                         }
                     }
 
-                    // જો ડેટા હોય તો જ બતાવો, નહીતર View છુપાવી દો (Flexible)
-                    if (festName.isNotEmpty()) {
+                    if (eventList.isNotEmpty()) {
                         views.setViewVisibility(R.id.widget_festival_text, View.VISIBLE)
-                        views.setTextViewText(R.id.widget_festival_text, festName)
+                        views.setTextViewText(R.id.widget_festival_text, eventList.joinToString("\n"))
                     } else {
                         views.setViewVisibility(R.id.widget_festival_text, View.GONE)
-                    }
-
-                    if (specialName.isNotEmpty()) {
-                        views.setViewVisibility(R.id.widget_special_day_text, View.VISIBLE) // આ નવું ID લેઆઉટમાં હોવું જોઈએ
-                        views.setTextViewText(R.id.widget_special_day_text, specialName)
-                    } else {
-                        views.setViewVisibility(R.id.widget_special_day_text, View.GONE)
                     }
 
                     // ૪. રીમાઇન્ડર
@@ -98,7 +89,6 @@ class CalendarWidget : AppWidgetProvider() {
                         views.setViewVisibility(R.id.widget_reminder_text, View.VISIBLE)
                         views.setTextViewText(R.id.widget_reminder_text, reminder)
                     } else {
-                        // જો રીમાઇન્ડર ખાલી હોય તો સુવિચાર બતાવો અથવા છુપાવો
                         views.setViewVisibility(R.id.widget_reminder_text, View.GONE)
                     }
                 }
