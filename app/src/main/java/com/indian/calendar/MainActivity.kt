@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
             "Tamil (தமிழ்)" to TranslateLanguage.TAMIL,
             "Telugu (తెలుగు)" to TranslateLanguage.TELUGU,
             "Kannada (ಕನ್ನಡ)" to TranslateLanguage.KANNADA,
-            "Malayalam (മലയാളം)" to TranslateLanguage.MALAYALAM,
             "Spanish (Español)" to TranslateLanguage.SPANISH,
             "French (Français)" to TranslateLanguage.FRENCH,
             "German (Deutsch)" to TranslateLanguage.GERMAN,
