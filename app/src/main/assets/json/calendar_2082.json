@@ -1,85 +1,65 @@
 {
   "2026-01-01": {
-    "eng_full": "1 January 2026, Thursday",
-    "day_gu": "ગુરુવાર",
     "calendars": {
-      "vikram_gu": "૨૦૮૨ પોષ સુદ ૧૨",
-      "vikram_hi": "२०८२ पौष शुक्ल द्वादशी",
-      "shaka_hi": "१८४७ पौष ११",
-      "hijri_ar": "١١ رجب ١٤٤૭",
-      "nanakshahi_pa": "૧૮ Poh (ਪੋਹ)",
-      "bengali_bn": "૧૬ Poush (পৌষ)",
-      "tamil_ta": "૧૭ Margazhi (மார்கழி)",
-      "malayalam_ml": "૧૭ Dhanu (ധനു)",
-      "jain_veer": "૨૫૫૨ પોષ ૧૨",
-      "hebrew_en": "12 Tevet 5786",
-      "chinese_en": "Month 11, Day 11 (Snake)",
-      "persian_en": "11 Dey 1404",
-      "parsi_en": "18 Amardad 1395",
-      "tibetan_en": "Month 11, Day 12",
-      "buddhist_en": "2570 BE",
-      "ethiopian_en": "23 Tahsas 2018",
-      "coptic_en": "23 Kiahk 1742",
-      "mayan_en": "13.0.13.3.11",
-      "kollavarsham_en": "1201 Makaram 1",
-      "nepal_sambat": "૧૧૪૬ Pohelathwa 12"
+      "vikram_samvat": { "date": "12", "month": "Paush Sud", "year": "2082" },
+      "shaka_samvat": { "date": "11", "month": "Paush", "year": "1947" },
+      "hijri": { "date": "11", "month": "Rajab", "year": "1447" },
+      "nanakshahi": { "date": "18", "month": "Poh", "year": "557" },
+      "chinese": { "date": "11", "month": "Month 11", "year": "Snake" },
+      "gregorian": { "date": "1", "month": "January", "year": "2026" }
     },
-    "festivals": {
-      "gu": "અંગ્રેજી નવું વર્ષ / પુત્રદા એકાદશી",
-      "en": "New Year / Putrada Ekadashi"
-    },
-    "special_day": {
-      "gu": "વૈશ્વિક પરિવાર દિવસ",
-      "en": "Global Family Day"
-    }
+    "festivals": [
+      { "name": "Putrada Ekadashi", "category": "vikram_samvat" },
+      { "name": "New Year", "category": "gregorian" }
+    ],
+    "special_days": [
+      { "name": "Global Family Day", "category": "all" }
+    ]
   },
   "2026-01-02": {
-    "eng_full": "2 January 2026, Friday",
-    "day_gu": "શુક્રવાર",
     "calendars": {
-      "vikram_gu": "૨૦૮૨ પોષ સુદ ૧૩",
-      "hijri_ar": "١٢ رجب ١٤٤٧",
-      "nanakshahi_pa": "૧૯ Poh",
-      "tamil_ta": "૧૮ Margazhi"
+      "vikram_samvat": { "date": "13", "month": "Paush Sud", "year": "2082" },
+      "hijri": { "date": "12", "month": "Rajab", "year": "1447" },
+      "gregorian": { "date": "2", "month": "January", "year": "2026" }
     },
-    "festivals": { "gu": "પ્રદોષ વ્રત", "en": "Pradosh Vrat" },
-    "special_day": { "gu": "", "en": "" }
+    "festivals": [
+      { "name": "Pradosh Vrat", "category": "vikram_samvat" }
+    ],
+    "special_days": []
   },
   "2026-01-03": {
-    "eng_full": "3 January 2026, Saturday",
-    "day_gu": "શનિવાર",
     "calendars": {
-      "vikram_gu": "૨૦૮૨ પોષ સુદ ૧૪",
-      "hijri_ar": "١૩ رجب ١૪૪૭",
-      "nanakshahi_pa": "૨૦ Poh",
-      "tamil_ta": "૧૯ Margazhi"
+      "vikram_samvat": { "date": "14", "month": "Paush Sud", "year": "2082" },
+      "hijri": { "date": "13", "month": "Rajab", "year": "1447" },
+      "gregorian": { "date": "3", "month": "January", "year": "2026" }
     },
-    "festivals": { "gu": "", "en": "" },
-    "special_day": { "gu": "", "en": "" }
+    "festivals": [],
+    "special_days": []
   },
   "2026-01-04": {
-    "eng_full": "4 January 2026, Sunday",
-    "day_gu": "રવિવાર",
     "calendars": {
-      "vikram_gu": "૨૦૮૨ પોષ પૂનમ",
-      "hijri_ar": "١૪ رجب ١૪૪૭",
-      "nanakshahi_pa": "૨૧ Poh",
-      "tamil_ta": "૨૦ Margazhi"
+      "vikram_samvat": { "date": "15", "month": "Paush Purnima", "year": "2082" },
+      "hijri": { "date": "14", "month": "Rajab", "year": "1447" },
+      "gregorian": { "date": "4", "month": "January", "year": "2026" }
     },
-    "festivals": { "gu": "પોષી પૂનમ / શાકંભરી પૂર્ણિમા", "en": "Paush Purnima" },
-    "special_day": { "gu": "વિશ્વ બ્રેઈલ દિવસ", "en": "World Braille Day" }
+    "festivals": [
+      { "name": "Paush Purnima", "category": "vikram_samvat" }
+    ],
+    "special_days": [
+      { "name": "World Braille Day", "category": "all" }
+    ]
   },
   "2026-01-05": {
-    "eng_full": "5 January 2026, Monday",
-    "day_gu": "સોમવાર",
     "calendars": {
-      "vikram_gu": "૨૦૮૨ પોષ વદ ૧",
-      "hijri_ar": "١૫ رجب ١૪૪૭",
-      "nanakshahi_pa": "૨૨ Poh",
-      "tamil_ta": "૨૧ Margazhi"
+      "vikram_samvat": { "date": "1", "month": "Paush Vad", "year": "2082" },
+      "hijri": { "date": "15", "month": "Rajab", "year": "1447" },
+      "gregorian": { "date": "5", "month": "January", "year": "2026" }
     },
-    "festivals": { "gu": "માઘ સ્નાન પ્રારંભ", "en": "Magh Snan Start" },
-    "special_day": { "gu": "રાષ્ટ્રીય પક્ષી દિવસ", "en": "National Bird Day" }
+    "festivals": [
+      { "name": "Magh Snan Start", "category": "vikram_samvat" }
+    ],
+    "special_days": [
+      { "name": "National Bird Day", "category": "all" }
+    ]
   }
 }
-
