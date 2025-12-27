@@ -11,25 +11,25 @@ import java.util.*
 
 class CalendarWidget : AppWidgetProvider() {
 
-    private fun translateToLocal(text: String): String {
-        val map = mapOf(
-            "0" to "૦", "1" to "૧", "2" to "૨", "3" to "૩", "4" to "૪", "5" to "૫",
-            "6" to "૬", "7" to "૭", "8" to "૮", "9" to "૯",
-            "January" to "January", "February" to "February", "March" to "March",
-            "April" to "April", "May" to "May", "June" to "June",
-            "July" to "July", "August" to "August", "September" to "September",
-            "October" to "October", "November" to "November", "December" to "December",
-            "Saturday" to "શનિવાર", "Sunday" to "રવિવાર", "Monday" to "સોમવાર",
-            "Tuesday" to "મંગળવાર", "Wednesday" to "બુધવાર", "Thursday" to "ગુરુવાર",
-            "Friday" to "શુક્રવાર",
-            "Paush Sud" to "પોષ સુદ", "Paush Vad" to "પોષ વદ", "Paush Purnima" to "પોષ પૂનમ",
-            "New Year" to "ખ્રિસ્તી નવું વર્ષ",
-            "Putrada Ekadashi" to "પુત્રદા એકાદશી",
-            "Global Family Day" to "વિશ્વ પરિવાર દિવસ"
-        )
-        var result = text
-        map.forEach { (eng, local) -> result = result.replace(eng, local) }
+    // આ ફંક્શન કોઈપણ ભાષાના આંકડા (1, 2, 3) ને તે ભાષાની લિપિમાં ફેરવશે
+    private fun formatLocalNumbers(text: String, langCode: String): String {
+        val locale = Locale(langCode)
+        val nf = java.text.NumberFormat.getInstance(locale)
+        var result = ""
+        for (char in text) {
+            result += if (char.isDigit()) {
+                nf.format(char.toString().toLong())
+            } else {
+                char
+            }
+        }
         return result
+    }
+
+    // સિસ્ટમમાંથી વાર અને મહિનાના નામ ઓટોમેટિક મેળવવા માટે
+    private fun getSystemName(calendar: Calendar, pattern: String, langCode: String): String {
+        val sdf = SimpleDateFormat(pattern, Locale(langCode))
+        return sdf.format(calendar.time)
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
@@ -38,11 +38,11 @@ class CalendarWidget : AppWidgetProvider() {
             val sharedPref = context.getSharedPreferences("CalendarPrefs", Context.MODE_PRIVATE)
             
             val selectedKey = sharedPref.getString("selected_key", "vikram_samvat") ?: "vikram_samvat"
+            val selectedLang = sharedPref.getString("selected_language", "gu") ?: "gu"
             
             val calendar = Calendar.getInstance()
-            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-            val currentDate = sdf.format(calendar.time) 
-            val dayName = SimpleDateFormat("EEEE", Locale.US).format(calendar.time)
+            val dbSdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            val currentDate = dbSdf.format(calendar.time)
 
             try {
                 val inputStream = context.assets.open("json/calendar_2082.json")
@@ -53,61 +53,34 @@ class CalendarWidget : AppWidgetProvider() {
                     val dateData = rootObject.getJSONObject(currentDate)
                     val calendars = dateData.getJSONObject("calendars")
 
-                    // ૧. કાર્ડ ૧ (Gregorian)
-                    val greg = calendars.getJSONObject("gregorian")
-                    val commonDate = "${greg.getString("date")}, ${greg.getString("month")} - ${greg.getString("year")}, $dayName"
+                    // ૧. કાર્ડ ૧ (Gregorian) - સંપૂર્ણ ઓટોમેટિક ટ્રાન્સલેશન
+                    val dayName = getSystemName(calendar, "EEEE", selectedLang)
+                    val monthName = getSystemName(calendar, "MMMM", selectedLang)
+                    val dateNum = formatLocalNumbers(calendar.get(Calendar.DAY_OF_MONTH).toString(), selectedLang)
+                    val yearNum = formatLocalNumbers(calendar.get(Calendar.YEAR).toString(), selectedLang)
+                    
+                    val commonDate = "$dateNum $monthName, $yearNum - $dayName"
                     views.setTextViewText(R.id.widget_english_date, commonDate)
 
-                    // ૨. કાર્ડ ૨ (Selected Calendar)
+                    // ૨. કાર્ડ ૨ (Custom Calendar) - આંકડા ટ્રાન્સલેટ થશે
                     if (calendars.has(selectedKey)) {
                         val calObj = calendars.getJSONObject(selectedKey)
-                        val prefix = when(selectedKey) {
-                            "vikram_samvat" -> "વિ.સં. "
-                            "shaka_samvat" -> "શક સંવત "
-                            "hijri" -> "હિજરી "
-                            else -> ""
-                        }
-                        val localText = "$prefix${translateToLocal(calObj.getString("year"))}, ${translateToLocal(calObj.getString("month"))} - ${translateToLocal(calObj.getString("date"))}, ${translateToLocal(dayName)}"
-                        views.setTextViewText(R.id.widget_date_text, localText)
-                        views.setViewVisibility(R.id.widget_date_text, View.VISIBLE)
+                        // વર્ષ અને તારીખના આંકડા બદલાશે, મહિનાનું નામ હાલ જેસોન મુજબ રહેશે
+                        val localInfo = "${formatLocalNumbers(calObj.getString("year"), selectedLang)}, ${calObj.getString("month")} - ${formatLocalNumbers(calObj.getString("date"), selectedLang)}"
+                        views.setTextViewText(R.id.widget_date_text, localInfo)
                     }
 
-                    // ૩. તહેવાર અને વિશેષ દિવસ
-                    val eventList = mutableListOf<String>()
-                    val festivals = dateData.optJSONArray("festivals")
-                    if (festivals != null) {
-                        for (i in 0 until festivals.length()) {
-                            val f = festivals.getJSONObject(i)
-                            if (f.getString("category") == selectedKey || f.getString("category") == "all" || f.getString("category") == "gregorian") {
-                                eventList.add(translateToLocal(f.getString("name")))
-                            }
-                        }
-                    }
-                    val specials = dateData.optJSONArray("special_days")
-                    if (specials != null) {
-                        for (i in 0 until specials.length()) {
-                            eventList.add(translateToLocal(specials.getJSONObject(i).getString("name")))
-                        }
-                    }
-
-                    if (eventList.isNotEmpty()) {
+                    // ૩. તહેવારો
+                    val festArray = dateData.optJSONArray("festivals")
+                    if (festArray != null && festArray.length() > 0) {
                         views.setViewVisibility(R.id.widget_festival_text, View.VISIBLE)
-                        views.setTextViewText(R.id.widget_festival_text, eventList.distinct().joinToString(" | "))
+                        views.setTextViewText(R.id.widget_festival_text, festArray.getJSONObject(0).getString("name"))
                     } else {
                         views.setViewVisibility(R.id.widget_festival_text, View.GONE)
                     }
-
-                    // ૪. રીમાઇન્ડર
-                    val reminder = sharedPref.getString("reminder_$currentDate", "")
-                    if (!reminder.isNullOrEmpty()) {
-                        views.setViewVisibility(R.id.widget_reminder_text, View.VISIBLE)
-                        views.setTextViewText(R.id.widget_reminder_text, reminder)
-                    } else {
-                        views.setViewVisibility(R.id.widget_reminder_text, View.GONE)
-                    }
                 }
             } catch (e: Exception) {
-                views.setTextViewText(R.id.widget_date_text, "ડેટા એરર")
+                views.setTextViewText(R.id.widget_date_text, "Data Error")
             }
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
