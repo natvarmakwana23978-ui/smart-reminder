@@ -1,4 +1,4 @@
-package your.package.name // અહીં તમારું પેકેજ નેમ લખવું
+package com.indian.calendar
 
 import android.content.Context
 import android.os.Bundle
@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         spinnerLang.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, languages)
 
         // ૨૨ કેલેન્ડર કી (JSON મુજબ)
-        val calendars = arrayOf("islamic", "hebrew", "persian", "indian_civil", "buddhist", "jain", "mayan", "nepal_samvat")
+        val calendars = arrayOf("islamic", "hebrew", "persian", "indian_civil", "buddhist", "jain", "mayan", "nepal_samvat", "saka_civil")
         spinnerCal.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, calendars)
 
         btnSave.setOnClickListener {
