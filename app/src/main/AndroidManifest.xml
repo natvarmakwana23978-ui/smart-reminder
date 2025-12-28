@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.indian.calendar">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:label="ભારતીય કેલેન્ડર"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:usesCleartextTraffic="true"
-        android:networkSecurityConfig="@xml/network_security_config"
-        tools:targetApi="31">
+        android:icon="@mipmap/ic_launcher"
+        android:label="Global Calendar Widget"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
 
         <activity
             android:name=".MainActivity"
@@ -26,15 +16,16 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".CalendarWidget" android:exported="true">
+        <receiver android:name=".CalendarWidgetProvider"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/calendar_widget_info" />
+                android:resource="@xml/widget_info" />
         </receiver>
 
     </application>
-
 </manifest>
+
