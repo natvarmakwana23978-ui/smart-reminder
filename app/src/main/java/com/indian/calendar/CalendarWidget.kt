@@ -31,7 +31,7 @@ class CalendarWidget : AppWidgetProvider() {
 
         // સેટિંગ્સમાંથી ભાષા અને કેલેન્ડર પ્રકાર લો
         val lang = prefs.getString("language", "gu") ?: "gu"
-        val selectedCal = prefs.getString("calendar_type", "islamic") ?: "islamic"
+        val selectedCal = "parsi_zoroastrian"
 
         // JSON ડેટા લોડ કરો
         val jsonData = loadJSONFromAsset(context)
