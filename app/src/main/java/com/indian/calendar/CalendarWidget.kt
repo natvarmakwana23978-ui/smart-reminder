@@ -10,56 +10,60 @@ import java.util.*
 
 class CalendarWidget : AppWidgetProvider() {
 
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+    override fun onUpdate(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetIds: IntArray
+    ) {
         for (appWidgetId in appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId)
         }
     }
 
-    private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+    private fun updateAppWidget(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int) {
+
         val views = RemoteViews(context.packageName, R.layout.calendar_widget)
         val prefs = context.getSharedPreferences("CalendarPrefs", Context.MODE_PRIVATE)
         
-        // ૧. આજની તારીખ
+        // ૧. યુઝરની પસંદગી મેળવો (ભાષા અને કેલેન્ડર પ્રકાર)
+        // જો યુઝરે કઈ પસંદ ન કર્યું હોય તો ગુજરાતી (gu) અને ઇસ્લામિક (islamic) ડિફોલ્ટ રહેશે
+        val selectedLang = prefs.getString("language", "gu") ?: "gu"
+        val selectedCal = prefs.getString("calendar_type", "islamic") ?: "islamic"
+
         val now = Date()
-        val sdfKey = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
-        val todayKey = sdfKey.format(now)
+        val todayKey = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(now)
 
-        // લાઈન ૧: અંગ્રેજી (ફિક્સ)
-        val line1 = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.ENGLISH).format(now)
-        views.setTextViewText(R.id.date_line_1, line1)
+        // --- લાઈન ૧: ગ્રેગોરિયન (અંગ્રેજી) તારીખ ---
+        // આ લાઈન પણ યુઝરે પસંદ કરેલી ભાષામાં દેખાશે
+        val df1 = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale(selectedLang))
+        views.setTextViewText(R.id.date_line_1, df1.format(now))
 
-        // સેટિંગ્સમાંથી ભાષા અને કેલેન્ડર પ્રકાર લો
-        val lang = prefs.getString("language", "gu") ?: "gu"
-        val selectedCal = "parsi_zoroastrian"
-
-        // JSON ડેટા લોડ કરો
-        val jsonData = loadJSONFromAsset(context)
-        val dayObject = jsonData?.optJSONObject(todayKey)
-
-        // લાઈન ૨: કેલેન્ડર વિગત (સ્માર્ટ લોજિક સાથે)
-        var line2Text = ""
-        if (selectedCal == "parsi_zoroastrian") {
-            // જો પારસી હોય તો આપણે બનાવેલા એન્જિન માંથી સીધો ડેટા લો
-            line2Text = CalendarEngine.getParsiDetails(now, lang)
-        } else if (dayObject != null) {
-            val globalCals = dayObject.optJSONObject("global_calendars")
-            val rawValue = globalCals?.optString(selectedCal, "") ?: ""
-            // અન્ય કેલેન્ડર માટે ફોર્મેટર વાપરો
-            line2Text = CalendarEngine.formatCalendarDisplay(rawValue, selectedCal, lang)
-        }
+        // --- લાઈન ૨: ગ્લોબલ કેલેન્ડર (વિશ્વની કોઈપણ ભાષામાં) ---
+        // આ આપણું નવું ગ્લોબલ એન્જિન વાપરશે
+        val line2Text = GlobalCalendarManager.getFormattedDate(selectedCal, selectedLang)
         views.setTextViewText(R.id.date_line_2, line2Text)
 
-        // લાઈન ૩: તહેવાર (ભાષા મુજબ)
-        val festivals = dayObject?.optJSONObject("festivals")
-        val festivalName = festivals?.optString(lang) ?: dayObject?.optJSONObject("gujarati_info")?.optString("festival") ?: ""
-        views.setTextViewText(R.id.date_line_3, if (festivalName.isEmpty()) "વિશેષ દિવસ નથી" else festivalName)
+        // JSON ડેટા લોડ કરો (તહેવાર અને વિશેષ દિવસ માટે)
+        val jsonData = loadJSONFromAsset(context)
+        val dayData = jsonData?.optJSONObject(todayKey)
 
-        // લાઈન ૪: રીમાઇન્ડર (ડેટાબેઝ માંથી આવશે, હાલ સેમ્પલ)
-        val reminder = prefs.getString("reminder_$todayKey", "કોઈ રીમાઇન્ડર નથી")
-        views.setTextViewText(R.id.date_line_4, reminder)
+        // --- લાઈન ૩: તહેવાર / વિશેષ દિવસ ---
+        val festival = dayData?.optJSONObject("festivals")?.optString(selectedLang) 
+                       ?: dayData?.optJSONObject("gujarati_info")?.optString("festival") ?: ""
+        
+        val noFestivalText = if (selectedLang == "gu") "આજે કોઈ વિશેષ દિવસ નથી" else "No special events today"
+        views.setTextViewText(R.id.date_line_3, if (festival.isEmpty()) noFestivalText else festival)
 
-        AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views)
+        // --- લાઈન ૪: યુઝરનું પર્સનલ રીમાઇન્ડર (નોંધ) ---
+        val reminder = prefs.getString("reminder_$todayKey", "")
+        val noReminderText = if (selectedLang == "gu") "કોઈ નોંધ નથી" else "No reminders"
+        views.setTextViewText(R.id.date_line_4, if (reminder.isNullOrEmpty()) noReminderText else reminder)
+
+        // વિજેટ અપડેટ કરો
+        appWidgetManager.updateAppWidget(appWidgetId, views)
     }
 
     private fun loadJSONFromAsset(context: Context): JSONObject? {
@@ -69,7 +73,8 @@ class CalendarWidget : AppWidgetProvider() {
             stream.read(buffer)
             stream.close()
             JSONObject(String(buffer, Charsets.UTF_8))
-        } catch (e: Exception) { null }
+        } catch (e: Exception) {
+            null
+        }
     }
 }
-
