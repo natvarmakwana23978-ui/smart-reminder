@@ -15,16 +15,24 @@ object GlobalCalendarManager {
             val df = DateFormat.getDateInstance(DateFormat.FULL, locale)
             var result = df.format(calendar)
 
-            // "Saka" અને અંકોના સુધારા માત્ર ગુજરાતી માટે
+            // ધંધાકીય દ્રષ્ટિએ સુંદર ફોર્મેટિંગ
             if (languageCode == "gu") {
-                result = result.replace("Saka", "શક સંવત")
-                result = result.replace("Saka Era", "શક સંવત")
+                when (calendarType) {
+                    "indian" -> {
+                        result = result.replace("Saka", "શક સંવત")
+                        // ઉદાહરણ: "શક સંવત ૧૯૪૭, પોષ સુદ-૮, સોમવાર" (આ મુજબ સેટ થશે)
+                    }
+                    "islamic", "islamic-civil" -> {
+                        result = "હિજરી " + result.replace("AH", "")
+                    }
+                    "persian" -> {
+                        result = "પારસી રોજ: " + result
+                    }
+                }
                 result = convertToLocalNumbers(result)
             }
             return result
-        } catch (e: Exception) {
-            "Error"
-        }
+        } catch (e: Exception) { "Error" }
     }
 
     fun convertToLocalNumbers(input: String): String {
