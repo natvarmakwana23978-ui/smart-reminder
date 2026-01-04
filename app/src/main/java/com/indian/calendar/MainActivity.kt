@@ -21,8 +21,35 @@ class MainActivity : AppCompatActivity() {
     private lateinit var txtEmoji: TextView
     private lateinit var languageSpinner: Spinner
 
-    // ભાષાઓની યાદી
-    private val languages = arrayOf("Gujarati", "Hindi", "Marathi", "English")
+    // દુનિયાની મુખ્ય ભાષાઓનું લિસ્ટ
+    private val languageMap = mapOf(
+        "Gujarati" to TranslateLanguage.GUJARATI,
+        "Hindi" to TranslateLanguage.HINDI,
+        "Marathi" to TranslateLanguage.MARATHI,
+        "Bengali" to TranslateLanguage.BENGALI,
+        "Tamil" to TranslateLanguage.TAMIL,
+        "Telugu" to TranslateLanguage.TELUGU,
+        "Kannada" to TranslateLanguage.KANNADA,
+        "Malayalam" to TranslateLanguage.MALAYALAM,
+        "Punjabi" to TranslateLanguage.PUNJABI,
+        "Urdu" to TranslateLanguage.URDU,
+        "English" to TranslateLanguage.ENGLISH,
+        "Spanish" to TranslateLanguage.SPANISH,
+        "French" to TranslateLanguage.FRENCH,
+        "German" to TranslateLanguage.GERMAN,
+        "Chinese" to TranslateLanguage.CHINESE,
+        "Japanese" to TranslateLanguage.JAPANESE,
+        "Korean" to TranslateLanguage.KOREAN,
+        "Arabic" to TranslateLanguage.ARABIC,
+        "Russian" to TranslateLanguage.RUSSIAN,
+        "Portuguese" to TranslateLanguage.PORTUGUESE,
+        "Italian" to TranslateLanguage.ITALIAN,
+        "Thai" to TranslateLanguage.THAI,
+        "Turkish" to TranslateLanguage.TURKISH,
+        "Vietnamese" to TranslateLanguage.VIETNAMESE,
+        "Indonesian" to TranslateLanguage.INDONESIAN
+    )
+
     private var currentTranslator: Translator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,43 +66,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupLanguageMenu() {
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
+        val langNames = languageMap.keys.toList()
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, langNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         languageSpinner.adapter = adapter
 
         languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedLang = languages[position]
-                prepareTranslatorAndFetchData(selectedLang)
+                val selectedLangName = langNames[position]
+                val selectedLangCode = languageMap[selectedLangName] ?: TranslateLanguage.ENGLISH
+                prepareTranslatorAndFetchData(selectedLangCode)
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 
-    private fun prepareTranslatorAndFetchData(lang: String) {
-        val targetLang = when (lang) {
-            "Gujarati" -> TranslateLanguage.GUJARATI
-            "Hindi" -> TranslateLanguage.HINDI
-            "Marathi" -> TranslateLanguage.MARATHI
-            else -> TranslateLanguage.ENGLISH
-        }
+    private fun prepareTranslatorAndFetchData(targetLangCode: String) {
+        // જૂના ટ્રાન્સલેટરને બંધ કરો
+        currentTranslator?.close()
 
         val options = TranslatorOptions.Builder()
             .setSourceLanguage(TranslateLanguage.ENGLISH)
-            .setTargetLanguage(targetLang)
+            .setTargetLanguage(targetLangCode)
             .build()
         
         currentTranslator = Translation.getClient(options)
         
-        txtPanchang.text = "ભાષા મોડેલ ડાઉનલોડ થઈ રહ્યું છે..."
+        txtPanchang.text = "Loading Language Module..."
         
         currentTranslator?.downloadModelIfNeeded()
-            ?.addOnSuccessListener {
-                fetchSheetData()
-            }
-            ?.addOnFailureListener {
-                txtPanchang.text = "Error: ભાષા મોડેલ ડાઉનલોડ ન થઈ શક્યું."
-            }
+            ?.addOnSuccessListener { fetchSheetData() }
+            ?.addOnFailureListener { txtPanchang.text = "Error downloading language pack." }
     }
 
     private fun fetchSheetData() {
@@ -88,7 +109,7 @@ class MainActivity : AppCompatActivity() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread { txtPanchang.text = "ઇન્ટરનેટ કનેક્શન નથી." }
+                runOnUiThread { txtPanchang.text = "No Internet Connection." }
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -98,15 +119,20 @@ class MainActivity : AppCompatActivity() {
                 for (line in lines) {
                     val row = line.split(",")
                     if (row.isNotEmpty() && row[0].contains(todayDate)) {
-                        // માની લો કે અંગ્રેજી પંચાંગ ડેટા કોલમ ૨ માં છે
+                        // શીટમાંથી અંગ્રેજી લખાણ ભેગું કરો
                         val englishText = "Gujarati: ${row[2]}\nIslamic: ${row[4]}"
                         
                         currentTranslator?.translate(englishText)
                             ?.addOnSuccessListener { translatedText ->
                                 runOnUiThread {
-                                    txtDate.text = "આજની તારીખ: ${row[0]}/2026"
+                                    txtDate.text = "Date: ${row[0]}/2026"
                                     txtPanchang.text = translatedText
-                                    if (row.size > 30) txtFestival.text = row[30]
+                                    // તહેવારનું પણ અનુવાદ કરવું હોય તો:
+                                    if (row.size > 30) {
+                                        currentTranslator?.translate(row[30])?.addOnSuccessListener {
+                                            txtFestival.text = it
+                                        }
+                                    }
                                     if (row.size > 31) txtEmoji.text = row[31]
                                 }
                             }
