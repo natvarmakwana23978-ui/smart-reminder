@@ -1,62 +1,110 @@
 package com.indian.calendar
 
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
+import okhttp3.*
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    // UI ના ઘટકો
+    private lateinit var txtDate: TextView
+    private lateinit var txtPanchang: TextView
+    private lateinit var txtFestival: TextView
+    private lateinit var txtEmoji: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val prefs = getSharedPreferences("CalendarPrefs", Context.MODE_PRIVATE)
-
-        // ૨૨ મુખ્ય ભાષાઓના કોડ
-        val languages = arrayOf("gu", "hi", "mr", "pa", "bn", "ta", "te", "kn", "ml", "en", "es", "fr", "de", "it", "ru", "ar", "ja", "zh", "ko", "tr", "pt", "vi")
+        // UI ઘટકોને ID સાથે જોડવા
+        txtDate = findViewById(R.id.txtDate)
+        txtPanchang = findViewById(R.id.txtPanchang)
+        txtFestival = findViewById(R.id.txtFestival)
+        txtEmoji = findViewById(R.id.txtEmoji)
         
-        // ૨૨ મુખ્ય કેલેન્ડરના કોડ
-        val calendars = arrayOf("indian", "islamic", "persian", "hebrew", "chinese", "ethiopic", "coptic", "buddhist", "japanese", "roc", "iso8601", "gregorian", "dangi", "ancient", "islamic-civil", "islamic-tbla", "islamic-umalqura", "islamic-rgsa", "persian-civil", "hebrew-civil", "indian-civil", "ethiopic-amete-alem")
+        // જો તમે layout માં ProgressBar મૂક્યો હોય તો
+        // progressBar = findViewById(R.id.progressBar)
 
-        val spinnerLanguage = findViewById<Spinner>(R.id.spinnerLanguage)
-        val spinnerCalendar = findViewById<Spinner>(R.id.spinnerCalendar)
-        val switchAllFestivals = findViewById<SwitchCompat>(R.id.switchAllFestivals)
-        val switchSpecialDays = findViewById<SwitchCompat>(R.id.switchSpecialDays)
-
-        spinnerLanguage.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, languages)
-        spinnerCalendar.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, calendars)
-
-        // સેવ કરેલી વેલ્યુ સેટ કરવી
-        spinnerLanguage.setSelection(languages.indexOf(prefs.getString("language", "gu")))
-        spinnerCalendar.setSelection(calendars.indexOf(prefs.getString("calendar_type", "indian")))
-        switchAllFestivals.isChecked = prefs.getBoolean("show_all_festivals", false)
-        switchSpecialDays.isChecked = prefs.getBoolean("show_special_days", true)
-
-        findViewById<Button>(R.id.btnSave).setOnClickListener {
-            val editor = prefs.edit()
-            editor.putString("language", spinnerLanguage.selectedItem.toString())
-            editor.putString("calendar_type", spinnerCalendar.selectedItem.toString())
-            editor.putBoolean("show_all_festivals", switchAllFestivals.isChecked)
-            editor.putBoolean("show_special_days", switchSpecialDays.isChecked)
-            editor.apply()
-
-            updateWidget(this)
-            android.widget.Toast.makeText(this, "સેટિંગ્સ સેવ થયા!", android.widget.Toast.LENGTH_SHORT).show()
-        }
+        fetchTodayPanchang()
     }
 
-    private fun updateWidget(context: Context) {
-        val intent = Intent(context, CalendarWidget::class.java)
-        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-        val ids = AppWidgetManager.getInstance(context).getAppWidgetIds(ComponentName(context, CalendarWidget::class.java))
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-        context.sendBroadcast(intent)
+    private fun fetchTodayPanchang() {
+        // ૧. આજની તારીખ મેળવો (ફોર્મેટ: dd/MM)
+        val sdf = SimpleDateFormat("dd/MM", Locale.getDefault())
+        val todayDate = sdf.format(Date())
+
+        // ૨. ગૂગલ શીટની લિંક (CSV એક્સપોર્ટ મોડમાં)
+        val url = "https://docs.google.com/spreadsheets/d/1CuG14L_0yLveVDpXzKD80dy57yMu7TDWVdzEgxcOHdU/export?format=csv"
+
+        val client = OkHttpClient()
+        val request = Request.Builder().url(url).build()
+
+        // ૩. ઇન્ટરનેટ દ્વારા ડેટા ખેંચવો
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    txtPanchang.text = "નેટવર્ક એરર! ઇન્ટરનેટ ચાલુ કરો."
+                    txtPanchang.setTextColor(Color.RED)
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val csvContent = response.body?.string() ?: ""
+                
+                // CSV ની લાઈનો અલગ કરવી
+                val lines = csvContent.split("\n")
+
+                var found = false
+                for (line in lines) {
+                    // કોલમ અલગ કરવી (સ્પ્લિટ બાય કોમા)
+                    val row = line.split(",")
+                    
+                    // જો પહેલી કોલમ આજની તારીખ (dd/MM) ધરાવતી હોય
+                    if (row.isNotEmpty() && row[0].contains(todayDate)) {
+                        found = true
+                        runOnUiThread {
+                            // ડેટા સ્ક્રીન પર બતાવવો
+                            txtDate.text = "આજની તારીખ: ${row[0]}/2026"
+                            
+                            val panchangDetail = """
+                                🔸 ગુજરાતી: ${row[2]}
+                                🔹 હિન્દી: ${row[3]}
+                                ☪️ ઇસ્લામિક: ${row[4]}
+                                🗓️ વાર: ${if(row.size > 29) row[29] else ""}
+                            """.trimIndent()
+                            
+                            txtPanchang.text = panchangDetail
+                            
+                            // તહેવાર અને ઇમોજી (જો હોય તો)
+                            if (row.size > 30 && row[30].trim().isNotEmpty()) {
+                                txtFestival.text = row[30]
+                            } else {
+                                txtFestival.text = "આજે કોઈ ખાસ તહેવાર નથી"
+                            }
+                            
+                            if (row.size > 31) {
+                                txtEmoji.text = row[31]
+                            }
+                        }
+                        break
+                    }
+                }
+
+                if (!found) {
+                    runOnUiThread {
+                        txtPanchang.text = "આજની તારીખનો ડેટા મળ્યો નથી."
+                    }
+                }
+            }
+        })
     }
 }
+
