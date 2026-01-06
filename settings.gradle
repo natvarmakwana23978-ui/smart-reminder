@@ -6,7 +6,7 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS) // આ લાઈન મહત્વની છે
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -14,5 +14,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "indian-calendar-app"
-include ":app"
+include ':app'
 
