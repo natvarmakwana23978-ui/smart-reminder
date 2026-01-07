@@ -12,12 +12,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val txtTithi = findViewById<TextView>(R.id.txtTithi) // ખાતરી કરો કે XML માં આ ID છે
+        // XML ના ID સાથે મેચ કરેલા વેરીએબલ્સ
+        val txtTithi = findViewById<TextView>(R.id.txtTithi)
         val spinner = findViewById<Spinner>(R.id.spinnerOptions)
         val btnSearch = findViewById<Button>(R.id.btnSearchLanguage)
 
-        // આજની સાચી વિગત સેટ કરવી (Manual for testing)
-        // 7 Jan 2026 = Posh Vad Pancham
+        // આજની સાચી તિથિ સેટ કરી (૭ જાન્યુઆરી, ૨૦૨૬ માટે)
         txtTithi.text = "આજે પોષ વદ પાંચમ છે"
 
         // સ્પિનર સેટઅપ
@@ -33,14 +33,13 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(this@MainActivity, ManageCalendarActivity::class.java)
                         startActivity(intent)
                     } catch (e: Exception) {
-                        Toast.makeText(this@MainActivity, "એક્ટિવિટી મળી નથી!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, "એક્ટિવિટી ખૂટે છે!", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        // ભાષા શોધો બટન પર ક્લિક
         btnSearch.setOnClickListener {
             Toast.makeText(this, "ભાષા શોધવાનું ફીચર ટૂંક સમયમાં આવશે", Toast.LENGTH_SHORT).show()
         }
