@@ -1,5 +1,6 @@
 package com.indian.calendar
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -12,36 +13,43 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // XML ના ID સાથે મેચ કરેલા વેરીએબલ્સ
-        val txtTithi = findViewById<TextView>(R.id.txtTithi)
-        val spinner = findViewById<Spinner>(R.id.spinnerOptions)
-        val btnSearch = findViewById<Button>(R.id.btnSearchLanguage)
+        val spinnerLang = findViewById<Spinner>(R.id.spinnerLanguage)
+        val spinnerCal = findViewById<Spinner>(R.id.spinnerCalendarType)
+        val btnSearch = findViewById<Button>(R.id.btnActionSearch)
+        val txtTithi = findViewById<TextView>(R.id.txtTithiDisplay)
 
-        // આજની સાચી તિથિ સેટ કરી (૭ જાન્યુઆરી, ૨૦૨૬ માટે)
-        txtTithi.text = "આજે પોષ વદ પાંચમ છે"
+        // ૧. ભાષાના ઓપ્શન્સ
+        val languages = arrayOf("ગુજરાતી", "Hindi", "English", "Sinhala", "Custom (તમારી ભાષા)")
+        val langAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, languages)
+        spinnerLang.adapter = langAdapter
 
-        // સ્પિનર સેટઅપ
-        val options = arrayOf("કેલેન્ડર પસંદ કરો", "ગુજરાતી", "હિન્દી", "પર્સનલ નોંધ ઉમેરો")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, options)
-        spinner.adapter = adapter
+        // ૨. કેલેન્ડરના ઓપ્શન્સ (Google Sheets + નવું બનાવવું)
+        val calendars = arrayOf(
+            "મુખ્ય સરકારી કેલેન્ડર (Google Sheet)",
+            "બેંક રજાઓનું કેલેન્ડર",
+            "સ્થાનિક સમુદાય કેલેન્ડર",
+            "+ નવું કેલેન્ડર બનાવો / સુધારો"
+        )
+        val calAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, calendars)
+        spinnerCal.adapter = calAdapter
 
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        // પસંદગી મુજબ કામ કરવું
+        spinnerCal.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selected = options[position]
-                if (selected == "પર્સનલ નોંધ ઉમેરો") {
-                    try {
-                        val intent = Intent(this@MainActivity, ManageCalendarActivity::class.java)
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        Toast.makeText(this@MainActivity, "એક્ટિવિટી ખૂટે છે!", Toast.LENGTH_SHORT).show()
-                    }
+                val selected = calendars[position]
+                if (selected == "+ નવું કેલેન્ડર બનાવો / સુધારો") {
+                    // યુઝરને એડિટ/ક્રિએટ સ્ક્રીન પર લઈ જવો
+                    val intent = Intent(this@MainActivity, ManageCalendarActivity::class.java)
+                    startActivity(intent)
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
         btnSearch.setOnClickListener {
-            Toast.makeText(this, "ભાષા શોધવાનું ફીચર ટૂંક સમયમાં આવશે", Toast.LENGTH_SHORT).show()
+            val lang = spinnerLang.selectedItem.toString()
+            Toast.makeText(this, "$lang માં ડેટા લોડ થઈ રહ્યો છે...", Toast.LENGTH_SHORT).show()
         }
     }
 }
+
