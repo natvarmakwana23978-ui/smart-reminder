@@ -3,7 +3,11 @@ package com.indian.calendar
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import java.util.*
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONArray
+import org.json.JSONObject
 
 class ManageCalendarActivity : AppCompatActivity() {
 
@@ -17,9 +21,10 @@ class ManageCalendarActivity : AppCompatActivity() {
         val datePicker = findViewById<DatePicker>(R.id.startDatePicker)
 
         btnGenerate.setOnClickListener {
-            // ૧. ડેટા મેળવવો અને અલ્પવિરામથી અલગ કરવો
+            // ૧. ઇનપુટ મેળવવો
             val rawMonths = editMonthNames.text.toString().trim()
             val rawDays = editDayNames.text.toString().trim()
+            val startDate = "${datePicker.dayOfMonth}-${datePicker.month + 1}-${datePicker.year}"
 
             // ૨. વેલિડેશન (ખાતરી કરવી કે વિગતો અધૂરી નથી)
             if (rawMonths.isEmpty() || rawDays.isEmpty()) {
@@ -35,24 +40,31 @@ class ManageCalendarActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // ૩. પસંદ કરેલી તારીખ મેળવવી
-            val startDay = datePicker.dayOfMonth
-            val startMonth = datePicker.month + 1 // મહિનો 0 થી શરૂ થાય એટલે +1
-            val startYear = datePicker.year
-
-            // ૪. હવે આ ડેટાને આપણે ગૂગલ શીટમાં મોકલવા માટે તૈયાર છીએ
-            processCalendarData(monthsList, daysList, startDay, startMonth, startYear)
+            // ૩. ડેટા મોકલવાનું ફંક્શન કોલ કરવું
+            sendToGoogleSheet(monthsList, daysList, startDate)
         }
     }
 
-    private fun processCalendarData(months: List<String>, days: List<String>, d: Int, m: Int, y: Int) {
-        // અહીં આપણે ડેટા પ્રિન્ટ કરીને ચેક કરીએ છીએ (લોગમાં દેખાશે)
-        println("New Calendar Logic: Starts on $d-$m-$y")
-        println("Months: $months")
-        println("Days: $days")
-
-        Toast.makeText(this, "માહિતી સફળતાપૂર્વક લેવામાં આવી છે!", Toast.LENGTH_LONG).show()
+    private fun sendToGoogleSheet(months: List<String>, days: List<String>, date: String) {
+        // આ URL ની જગ્યાએ તમારી પોતાની Script URL નાખવાની રહેશે
+        val url = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
         
-        // હવે પછીના કામમાં આપણે આ ડેટાને Google Sheet API સાથે જોડીશું
+        val queue = Volley.newRequestQueue(this)
+        val jsonBody = JSONObject()
+        jsonBody.put("calendarName", "Community Calendar")
+        jsonBody.put("months", JSONArray(months))
+        jsonBody.put("days", JSONArray(days))
+        jsonBody.put("startDate", date)
+
+        val request = JsonObjectRequest(Request.Method.POST, url, jsonBody,
+            { response ->
+                Toast.makeText(this, "કેલેન્ડર સફળતાપૂર્વક શેર થયું!", Toast.LENGTH_LONG).show()
+            },
+            { error ->
+                // ગૂગલ સ્ક્રિપ્ટમાં ઘણીવાર સક્સેસ હોવા છતાં રીડાયરેક્ટના લીધે એરર બતાવે છે
+                Toast.makeText(this, "પ્રોસેસ પૂર્ણ થઈ. શીટ ચેક કરો.", Toast.LENGTH_SHORT).show()
+            }
+        )
+        queue.add(request)
     }
 }
