@@ -1,86 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F0F2F5">
+    android:background="#F5F5F5"
+    android:padding="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="નવું કેલેન્ડર સેટઅપ"
+            android:text="નવું કેલેન્ડર બનાવો"
             android:textSize="22sp"
             android:textStyle="bold"
+            android:textColor="#2E7D32"
             android:gravity="center"
-            android:layout_marginBottom="20dp"
-            android:textColor="#1A237E"/>
+            android:layout_marginBottom="20dp"/>
 
-        <androidx.cardview.widget.CardView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="૧૨ મહિનાના નામ (અલ્પવિરામ , થી અલગ કરો)"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editMonthNames"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
-            <LinearLayout android:padding="16dp" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <TextView android:text="૧. મહિનાના ૧૨ નામ લખો" android:textStyle="bold" android:textSize="16sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#E64A19"/>
-                <EditText 
-                    android:id="@+id/editMonthNames"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="નામ અલ્પવિરામ (,) થી અલગ કરો (દા.ત. કાર્તક, માગશર...)"
-                    android:layout_marginTop="8dp"
-                    android:background="@android:drawable/editbox_background_normal"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            android:hint="દા.ત. કાર્તક, માગશર, પોષ..."
+            android:background="@android:drawable/editbox_background"
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/>
 
-        <androidx.cardview.widget.CardView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="વારના નામ (અલ્પવિરામ , થી અલગ કરો)"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editDayNames"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
-            <LinearLayout android:padding="16dp" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <TextView android:text="૨. વાર અથવા દિવસોના નામ" android:textStyle="bold" android:textSize="16sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#E64A19"/>
-                <EditText 
-                    android:id="@+id/editDayNames"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="૭ વાર અથવા ૩૦ દિવસના નામ અલ્પવિરામ થી અલગ કરો"
-                    android:layout_marginTop="8dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            android:hint="દા.ત. સોમ, મંગળ, બુધ..."
+            android:background="@android:drawable/editbox_background"
+            android:padding="10dp"
+            android:layout_marginBottom="15dp"/>
 
-        <androidx.cardview.widget.CardView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="કેલેન્ડર કઈ અંગ્રેજી તારીખથી શરૂ થાય છે?"
+            android:textStyle="bold" />
+
+        <DatePicker
+            android:id="@+id/startDatePicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="20dp">
-            <LinearLayout android:padding="16dp" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <TextView android:text="૩. કેલેન્ડર કઈ અંગ્રેજી તારીખે શરૂ થાય છે?" android:textStyle="bold" android:textSize="16sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#E64A19"/>
-                <DatePicker 
-                    android:id="@+id/startDatePicker"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:calendarViewShown="false"
-                    android:datePickerMode="spinner" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner" />
 
         <Button
             android:id="@+id/btnGenerateCalendar"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:text="મારું કેલેન્ડર જનરેટ કરો"
+            android:layout_height="wrap_content"
+            android:text="ગૂગલ શીટમાં સેવ અને શેર કરો"
             android:backgroundTint="#2E7D32"
-            android:textSize="18sp"
-            app:cornerRadius="8dp"/>
+            android:textColor="@android:color/white"
+            android:layout_marginTop="20dp"
+            android:padding="12dp" />
 
     </LinearLayout>
 </ScrollView>
