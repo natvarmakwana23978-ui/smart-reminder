@@ -3,60 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#F5F5F5">
+    android:padding="8dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ભાષા પસંદ કરો / Select Language"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <Spinner
-        android:id="@+id/spinnerLanguage"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:layout_marginBottom="20dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="કેલેન્ડર પસંદ કરો / Select Calendar"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <Spinner
-        android:id="@+id/spinnerCalendarType"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:layout_marginBottom="20dp"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#CCCCCC"
-        android:layout_marginBottom="20dp"/>
-
-    <TextView
-        android:id="@+id/txtTithiDisplay"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="આજે પોષ વદ પાંચમ છે"
-        android:textSize="22sp"
-        android:textColor="#2E7D32"
-        android:textStyle="bold"
-        android:layout_marginBottom="30dp"/>
+        android:orientation="horizontal">
+        <Button android:id="@+id/btnPrev" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="&lt;" />
+        <TextView android:id="@+id/txtMonthYear" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:text="January 2026" android:textSize="18sp" android:textStyle="bold" />
+        <Button android:id="@+id/btnNext" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="&gt;" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/btnActionSearch"
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ભાષા મુજબ ડેટા શોધો"
-        android:backgroundTint="#1976D2"/>
+        android:columnCount="7"
+        android:rowCount="1">
+        </GridLayout>
+
+    <GridView
+        android:id="@+id/calendarGridView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:numColumns="7"
+        android:verticalSpacing="1dp"
+        android:horizontalSpacing="1dp"
+        android:stretchMode="columnWidth" />
 
 </LinearLayout>
-
