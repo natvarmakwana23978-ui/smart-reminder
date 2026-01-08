@@ -1,1 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@android:drawable/dialog_holo_light_frame"
+    android:padding="4dp">
+
+    <TextView
+        android:id="@+id/txtDateNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/txtCustomDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="સુદ ૧"
+        android:textSize="12sp"
+        android:textColor="#2E7D32" />
+
+    <View
+        android:id="@+id/eventDot"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/holo_red_dark"
+        android:visibility="gone" />
+
+</LinearLayout>
 
