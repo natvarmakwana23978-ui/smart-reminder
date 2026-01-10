@@ -12,7 +12,9 @@ class CalendarSelectionAdapter(
 ) : RecyclerView.Adapter<CalendarSelectionAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val txtName: TextView = view.findViewById(R.id.calendarName)
+        // અહીં ID ચેક કરો, તે XML માં જે છે તે જ હોવા જોઈએ
+        val txtCalendarName: TextView = view.findViewById(R.id.txtCalendarName)
+        val txtCreatorName: TextView = view.findViewById(R.id.txtCreatorName)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,8 +25,12 @@ class CalendarSelectionAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-        holder.txtName.text = item.name
-        holder.itemView.setOnClickListener { onClick(item) }
+        holder.txtCalendarName.text = item.name
+        holder.txtCreatorName.text = item.creator
+        
+        holder.itemView.setOnClickListener {
+            onClick(item)
+        }
     }
 
     override fun getItemCount() = list.size
