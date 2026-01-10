@@ -13,8 +13,6 @@ import com.android.volley.Request
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 
-data class CalendarModel(val name: String, val creator: String)
-
 class CalendarSelectionActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
@@ -56,7 +54,7 @@ class CalendarSelectionActivity : AppCompatActivity() {
             },
             {
                 progressBar.visibility = View.GONE
-                Toast.makeText(this, "ઇન્ટરનેટ ચેક કરો અથવા સર્વર એરર", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Internet Error or Server Down", Toast.LENGTH_SHORT).show()
             }
         )
         Volley.newRequestQueue(this).add(request)
