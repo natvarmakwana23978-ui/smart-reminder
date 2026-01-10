@@ -54,7 +54,7 @@ class CalendarSelectionActivity : AppCompatActivity() {
             },
             {
                 progressBar.visibility = View.GONE
-                Toast.makeText(this, "Internet Error or Server Down", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "લિસ્ટ લોડ કરવામાં ભૂલ છે", Toast.LENGTH_SHORT).show()
             }
         )
         Volley.newRequestQueue(this).add(request)
