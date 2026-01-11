@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "user_notes")
 data class UserNote(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val date: String,          // વિજેટ આ તારીખથી ડેટા શોધશે
-    val personalNote: String,  // આ નામ વિજેટમાં વપરાયું છે (Unresolved reference સુધારો)
-    val isReligious: Boolean = false
+    val date: String,
+    val note: String,
+    val festivalName: String? = null
 )
