@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    // Room માટે આ પ્લગઈન જરૂરી છે
+    id("kotlin-kapt")
 }
 
 android {
@@ -42,8 +44,14 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     
-    // Volley for Internet Data - આ સૌથી મહત્વનું છે
+    // Volley for Internet Data
     implementation("com.android.volley:volley:1.2.1")
+
+    // Room Database Libraries (આ નવી ઉમેરી છે)
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
