@@ -17,6 +17,12 @@ class CalendarWidget : AppWidgetProvider() {
 
     private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
         val views = RemoteViews(context.packageName, R.layout.calendar_widget)
+        
+        // ૧. તારીખ સેટ કરવી (date_line_1 માટે)
+        val fullDateSdf = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale.getDefault())
+        views.setTextViewText(R.id.date_line_1, fullDateSdf.format(Date()))
+
+        // ૨. ડેટાબેઝ ચેક કરવા માટેની તારીખ
         val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         val currentDate = sdf.format(Date())
 
@@ -24,10 +30,12 @@ class CalendarWidget : AppWidgetProvider() {
             val db = AppDatabase.getDatabase(context)
             val noteEntry = db.userNoteDao().getNoteByDate(currentDate)
             
-            // અહીં 'personalNote' ને બદલે 'note' વાપર્યું છે
+            // તમારી નોંધ 'date_line_4' માં બતાવવી
             val displayText = noteEntry?.note ?: "આજે કોઈ નોંધ નથી"
             
-            views.setTextViewText(R.id.widget_note_text, displayText)
+            views.setTextViewText(R.id.date_line_4, displayText)
+            
+            // વિજેટ અપડેટ કરો
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
     }
