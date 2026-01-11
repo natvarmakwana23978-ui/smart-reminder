@@ -12,6 +12,7 @@ class LanguageSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_language_selection)
 
+        // લિસ્ટમાંથી આવેલું કેલેન્ડર નામ
         val calendarName = intent.getStringExtra("calendar_name") ?: "Default"
 
         findViewById<Button>(R.id.btnGujarati).setOnClickListener { setLanguage("gu", calendarName) }
@@ -20,11 +21,10 @@ class LanguageSelectionActivity : AppCompatActivity() {
     }
 
     private fun setLanguage(langCode: String, calendarName: String) {
-        // ભાષાને કાયમી સેવ કરવી
         val sharedPref = getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
         sharedPref.edit().putString("selected_lang", langCode).apply()
 
-        // કેલેન્ડર વ્યુ પર જવું
+        // કેલેન્ડર વ્યુ ખોલવો
         val intent = Intent(this, CalendarViewActivity::class.java)
         intent.putExtra("calendar_name", calendarName)
         startActivity(intent)
