@@ -12,6 +12,10 @@ interface UserNoteDao {
     @Query("SELECT * FROM user_notes")
     fun getAllNotes(): List<UserNote>
 
+    // આ ફંક્શન વિજેટ માટે જરૂરી છે
+    @Query("SELECT * FROM user_notes WHERE date = :date LIMIT 1")
+    fun getNoteByDate(date: String): UserNote?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNote(note: UserNote)
 
