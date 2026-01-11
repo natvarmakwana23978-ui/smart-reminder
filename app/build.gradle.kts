@@ -1,8 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    // Room માટે આ પ્લગઈન જરૂરી છે
-    id("kotlin-kapt")
+    id("kotlin-kapt") // Room Database માટે આ પ્લગઈન જરૂરી છે
 }
 
 android {
@@ -38,21 +37,23 @@ android {
 }
 
 dependencies {
-    // Standard Android Libraries
+    // Android સ્ટાન્ડર્ડ લાઇબ્રેરીઓ
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    
-    // Volley for Internet Data
-    implementation("com.android.volley:volley:1.2.1")
 
-    // Room Database Libraries (આ નવી ઉમેરી છે)
+    // Retrofit & GSON (ગૂગલ શીટમાંથી ડેટા લાવવા માટે)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Room Database (નોટ્સ અને રિમાઇન્ડર સેવ કરવા માટે)
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
 
+    // ટેસ્ટિંગ માટે
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
