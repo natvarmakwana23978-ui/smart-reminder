@@ -3,23 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFDE7">
+    android:padding="20dp">
 
     <EditText
-        android:id="@+id/searchDate"
+        android:id="@+id/etCalendarName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="તારીખ શોધો (દા.ત. 14/01)"
-        android:padding="15dp"
-        android:layout_margin="10dp"
-        android:background="@android:drawable/edit_text"
-        android:inputType="date" />
+        android:hint="કેલેન્ડરનું નામ લખો" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/calendarRecyclerView"
+    <Button
+        android:id="@+id/btnSaveCalendar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="5dp"
-        android:clipToPadding="false" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="સેવ કરો" />
 
 </LinearLayout>
