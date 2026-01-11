@@ -2,64 +2,50 @@ package com.indian.calendar
 
 import android.os.Bundle
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import org.json.JSONArray
+import java.util.*
 
 class CalendarViewActivity : AppCompatActivity() {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: CalendarAdapter
-    private val webAppUrl = "https://script.google.com/macros/s/AKfycbw7U_En4xgEayUOV3N3HwoW-GkfyOONMUxidIeZbOAxCfGJqxcXeWFvz6pnJL5nRQQ3/exec"
+    private lateinit var tvMonthYear: TextView
+    private lateinit var rvCalendar: RecyclerView
+    private val daysList = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view)
 
-        recyclerView = findViewById(R.id.calendarRecyclerView)
-        // ૭ કોલમવાળી ગ્રીડ (અઠવાડિયાના ૭ દિવસ માટે)
-        recyclerView.layoutManager = GridLayoutManager(this, 7)
+        tvMonthYear = findViewById(R.id.tvMonthYear)
+        rvCalendar = findViewById(R.id.rvCalendar)
 
-        fetchCalendarData()
+        setupCalendar()
     }
 
-    private fun fetchCalendarData() {
-        val queue = Volley.newRequestQueue(this)
-        val stringRequest = StringRequest(Request.Method.GET, webAppUrl,
-            { response ->
-                val daysList = parseSheetData(response)
-                adapter = CalendarAdapter(daysList)
-                recyclerView.adapter = adapter
-            },
-            { error ->
-                Toast.makeText(this, "ડેટા લોડ કરવામાં ભૂલ: ${error.message}", Toast.LENGTH_SHORT).show()
-            }
-        )
-        queue.add(stringRequest)
-    }
-
-    private fun parseSheetData(jsonResponse: String): List<String> {
-        val list = mutableListOf<String>()
-        try {
-            val jsonArray = JSONArray(jsonResponse)
-            // આપણે ધારીએ છીએ કે શીટની છેલ્લી રો માં લેટેસ્ટ કેલેન્ડર છે
-            if (jsonArray.length() > 0) {
-                val lastRow = jsonArray.getJSONArray(jsonArray.length() - 1)
-                // આપણી શીટમાં ચોથા નંબરે (Index 3) 'days' લિસ્ટ છે
-                val daysArray = JSONArray(lastRow.getString(3))
-                for (i in 0 until daysArray.length()) {
-                    list.add(daysArray.getString(i))
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+    private fun setupCalendar() {
+        // અહીં 'day' અને 'position' નો પ્રકાર (String, Int) સ્પષ્ટ કર્યો છે
+        val adapter = CalendarAdapter(daysList) { day: String, position: Int ->
+            // જ્યારે કોઈ તારીખ પર ક્લિક થાય ત્યારનું લોજિક
+            onDateSelected(day)
         }
-        return list
+        
+        rvCalendar.layoutManager = GridLayoutManager(this, 7)
+        rvCalendar.adapter = adapter
+        
+        generateDates()
+    }
+
+    private fun generateDates() {
+        daysList.clear()
+        // ઉદાહરણ તરીકે ૧ થી ૩૦ તારીખ ઉમેરીએ છીએ
+        for (i in 1..30) {
+            daysList.add(i.toString())
+        }
+        rvCalendar.adapter?.notifyDataSetChanged()
+    }
+
+    private fun onDateSelected(date: String) {
+        // અહીં તારીખ પસંદગીનું લોજિક આવશે
     }
 }
-
