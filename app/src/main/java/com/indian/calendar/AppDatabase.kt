@@ -8,18 +8,11 @@ import androidx.room.RoomDatabase
 @Database(entities = [UserNote::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userNoteDao(): UserNoteDao
-
     companion object {
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
-
+        @Volatile private var INSTANCE: AppDatabase? = null
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "calendar_database"
-                ).build()
+                val instance = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "calendar_db").build()
                 INSTANCE = instance
                 instance
             }
