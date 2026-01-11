@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.indian.calendar">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
-        android:label="Community Calendar"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Indiancalendarapp"
         android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
+        tools:targetApi="31">
+        
         <activity
             android:name=".CalendarSelectionActivity"
             android:exported="true">
@@ -22,5 +30,7 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".ManageCalendarActivity" />
         <activity android:name=".LanguageSelectionActivity" />
+        
     </application>
+
 </manifest>
