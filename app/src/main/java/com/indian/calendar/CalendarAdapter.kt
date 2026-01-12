@@ -17,7 +17,8 @@ class CalendarAdapter(private val days: List<String>) : RecyclerView.Adapter<Cal
         val dayText = holder.itemView.findViewById<TextView>(android.R.id.text1)
         dayText.text = days[position]
         dayText.textAlignment = View.TEXT_ALIGNMENT_CENTER
-        dayText.textSize = 16sp
+        // અહીં મેં સુધારો કર્યો છે
+        dayText.textSize = 16f 
     }
 
     override fun getItemCount(): Int = days.size
