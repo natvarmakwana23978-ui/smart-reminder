@@ -28,6 +28,7 @@ class CalendarViewActivity : AppCompatActivity() {
                 super.onPageSelected(position)
                 val calendar = Calendar.getInstance()
                 calendar.add(Calendar.MONTH, position - 500)
+                // ગુજરાતીમાં મહિનાના નામ માટે
                 val sdf = SimpleDateFormat("MMMM yyyy", Locale("gu"))
                 tvMonthYear.text = sdf.format(calendar.time)
             }
