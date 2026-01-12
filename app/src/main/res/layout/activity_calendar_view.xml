@@ -11,12 +11,12 @@
         android:padding="16dp"
         android:textAlignment="center"
         android:textSize="20sp"
+        android:textColor="#2E7D32"
         android:textStyle="bold" />
 
-    <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/calendarRecyclerView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
-        android:padding="8dp" />
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/calendarViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>
