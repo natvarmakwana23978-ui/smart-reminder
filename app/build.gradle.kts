@@ -27,10 +27,12 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions { jvmTarget = "11" }
-    
-    // kapt ની એરર રોકવા માટે
-    kapt { correctErrorTypes = true }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
@@ -38,12 +40,15 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    
+    // ViewPager2 - મહિના સ્વાઈપ કરવા માટે જરૂરી
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
 
-    // Retrofit & GSON
+    // Retrofit & GSON - ગૂગલ શીટમાંથી ડેટા લાવવા માટે
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    // Room Database
+    // Room Database - ઓફલાઈન ડેટા સેવ કરવા માટે
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
