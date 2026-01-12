@@ -17,18 +17,16 @@ class MonthPagerAdapter(private val startCalendar: Calendar) :
 
     override fun onBindViewHolder(holder: MonthViewHolder, position: Int) {
         val monthCalendar = startCalendar.clone() as Calendar
-        monthCalendar.add(Calendar.MONTH, position)
+        monthCalendar.add(Calendar.MONTH, position - 500)
         
         val daysInMonth = getDaysInMonthArray(monthCalendar)
-        
-        // અહીં CalendarAdapter ને ફક્ત એક જ આર્ગ્યુમેન્ટ (days) આપવી
         val calendarAdapter = CalendarAdapter(daysInMonth)
         
         holder.recyclerView.layoutManager = GridLayoutManager(holder.itemView.context, 7)
         holder.recyclerView.adapter = calendarAdapter
     }
 
-    override fun getItemCount(): Int = 1200 // ૧૦૦ વર્ષનું કેલેન્ડર (૧૦૦ * ૧૨ મહિના)
+    override fun getItemCount(): Int = 1000 
 
     private fun getDaysInMonthArray(calendar: Calendar): List<String> {
         val daysList = mutableListOf<String>()
@@ -38,15 +36,8 @@ class MonthPagerAdapter(private val startCalendar: Calendar) :
         val firstDayOfWeek = monthCalendar.get(Calendar.DAY_OF_WEEK) - 1
         val daysInMonth = monthCalendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
-        // શરૂઆતની ખાલી જગ્યાઓ
-        for (i in 0 until firstDayOfWeek) {
-            daysList.add("")
-        }
-
-        // તારીખો ૧ થી ૩૧
-        for (i in 1..daysInMonth) {
-            daysList.add(i.toString())
-        }
+        for (i in 0 until firstDayOfWeek) { daysList.add("") }
+        for (i in 1..daysInMonth) { daysList.add(i.toString()) }
         return daysList
     }
 
