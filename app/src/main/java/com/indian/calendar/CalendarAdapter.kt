@@ -13,7 +13,6 @@ class CalendarAdapter(
 ) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // તમે આપેલું ID: tvDay
         val tvDay: TextView = view.findViewById(R.id.tvDay)
     }
 
@@ -28,6 +27,7 @@ class CalendarAdapter(
 
         if (day.isNotEmpty()) {
             val dateParts = monthYearStr.split("/")
+            // શીટની તારીખ M/d/yyyy મુજબ કી બનાવો
             val dateKey = "${dateParts[0]}/$day/${dateParts[1]}"
             val data = sheetDataMap[dateKey]
             
