@@ -4,8 +4,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    // તમારી Apps Script ને 'Deploy' કર્યા પછી મળેલી લિંક અહીં 'exec' સુધી નાખો
-    private const val BASE_URL = "https://script.google.com/macros/s/AKfycbxDIcaJQ85VDhuup3Qn2YUCpnhX1OtDDTEIgMkTyqVeKHGmSBlh2-hukwhU6L58r1UO/exec/"
+    // તમારી Apps Script ને Deploy કર્યા પછી મળતી લિંક અહીં 'exec' પહેલા સુધીની નાખો
+    private const val BASE_URL = "https://script.google.com/macros/s/તમારી_સ્ક્રિપ્ટ_આઈડી_અહીં_નાખો/"
 
     val instance: ApiService by lazy {
         val retrofit = Retrofit.Builder()
