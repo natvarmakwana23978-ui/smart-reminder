@@ -11,6 +11,7 @@ class CalendarViewActivity : AppCompatActivity() {
 
     private lateinit var tvMonthYear: TextView
     private lateinit var calendarViewPager: ViewPager2
+    private var selectedColIndex: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,21 +19,27 @@ class CalendarViewActivity : AppCompatActivity() {
 
         tvMonthYear = findViewById(R.id.tvMonthYear)
         calendarViewPager = findViewById(R.id.calendarViewPager)
+        
+        // Intent થી ઇન્ડેક્સ મેળવો
+        selectedColIndex = intent.getIntExtra("COLUMN_INDEX", 0)
 
+        setupCalendar()
+    }
+
+    private fun setupCalendar() {
         val startCalendar = Calendar.getInstance()
-        val adapter = MonthPagerAdapter(startCalendar)
+        // પાસ કરો: Context, Calendar, અને પસંદ કરેલ Column Index
+        val adapter = MonthPagerAdapter(this, startCalendar, selectedColIndex)
         calendarViewPager.adapter = adapter
+        calendarViewPager.setCurrentItem(500, false)
 
         calendarViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
                 val calendar = Calendar.getInstance()
                 calendar.add(Calendar.MONTH, position - 500)
-                // ગુજરાતીમાં મહિનાના નામ માટે
                 val sdf = SimpleDateFormat("MMMM yyyy", Locale("gu"))
                 tvMonthYear.text = sdf.format(calendar.time)
             }
         })
-        calendarViewPager.setCurrentItem(500, false)
     }
 }
