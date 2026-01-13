@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class CalendarSelectionActivity : AppCompatActivity() {
 
@@ -24,8 +22,10 @@ class CalendarSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_selection)
 
+        // XML માં આ ID હોવા જરૂરી છે
         recyclerView = findViewById(R.id.calendarListRecyclerView)
         progressBar = findViewById(R.id.progressBar)
+        
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         fetchCalendars()
@@ -34,14 +34,7 @@ class CalendarSelectionActivity : AppCompatActivity() {
     private fun fetchCalendars() {
         progressBar.visibility = View.VISIBLE
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://script.google.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val api = retrofit.create(ApiService::class.java)
-
-        api.getCalendars().enqueue(object : Callback<List<CalendarModel>> {
+        RetrofitClient.instance.getCalendars().enqueue(object : Callback<List<CalendarModel>> {
             override fun onResponse(call: Call<List<CalendarModel>>, response: Response<List<CalendarModel>>) {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
@@ -49,9 +42,12 @@ class CalendarSelectionActivity : AppCompatActivity() {
                     if (!list.isNullOrEmpty()) {
                         calendarList.clear()
                         calendarList.addAll(list)
+                        
+                        // એડેપ્ટર સેટઅપ અને ક્લિક લિસનર
                         recyclerView.adapter = CalendarSelectionAdapter(calendarList) { selected ->
-                            val intent = Intent(this@CalendarSelectionActivity, LanguageSelectionActivity::class.java)
-                            intent.putExtra("calendar_name", selected.name)
+                            // જ્યારે યુઝર કેલેન્ડર સિલેક્ટ કરે ત્યારે ડાયરેક્ટ CalendarViewActivity પર જવું
+                            val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
+                            intent.putExtra("COLUMN_INDEX", selected.index)
                             startActivity(intent)
                         }
                     } else {
