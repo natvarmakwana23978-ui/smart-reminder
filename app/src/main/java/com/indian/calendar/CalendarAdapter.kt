@@ -1,5 +1,6 @@
 package com.indian.calendar
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +14,7 @@ class CalendarAdapter(
 ) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // ખાતરી કરો કે તમારા item_calendar_day.xml માં આ ID છે
-        val tvDate: TextView = view.findViewById(R.id.tvDate)
-        val tvDetail: TextView = view.findViewById(R.id.tvDetail)
+        val tvDay: TextView = view.findViewById(R.id.tvDay)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -25,18 +24,23 @@ class CalendarAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val day = daysList[position]
-        holder.tvDate.text = day
-
+        
         if (day.isNotEmpty()) {
-            // શીટની તારીખ (M/d/yyyy) સાથે મેચ કરવા માટે
-            val fullDateKey = "$monthYearStr".replaceBefore("/", day).replace("/", "/$day/")
-            // જો ઉપરનું લોજિક અઘરું લાગે તો સીધું:
             val dateKey = "${monthYearStr.split("/")[0]}/$day/${monthYearStr.split("/")[1]}"
-            
             val data = sheetDataMap[dateKey]
-            holder.tvDetail.text = data?.detail ?: ""
+            
+            // તારીખ અને તેની નીચે નાની તિથિ બતાવવા માટે
+            val displayInfo = if (data?.detail != null) "$day\n${data.detail}" else day
+            holder.tvDay.text = displayInfo
+            
+            // જો તહેવાર હોય તો રંગ બદલવો
+            if (!data?.festival.isNullOrEmpty()) {
+                holder.tvDay.setTextColor(Color.RED)
+            } else {
+                holder.tvDay.setTextColor(Color.BLACK)
+            }
         } else {
-            holder.tvDetail.text = ""
+            holder.tvDay.text = ""
         }
     }
 
