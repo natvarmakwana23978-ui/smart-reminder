@@ -15,12 +15,10 @@ class MonthPagerAdapter(
 ) : RecyclerView.Adapter<MonthPagerAdapter.MonthViewHolder>() {
 
     class MonthViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // તમે આપેલું ID: rvCalendar
         val recyclerView: RecyclerView = view.findViewById(R.id.rvCalendar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MonthViewHolder {
-        // તમે આપેલું લેઆઉટ: item_calendar_view
         val view = LayoutInflater.from(context).inflate(R.layout.item_calendar_view, parent, false)
         return MonthViewHolder(view)
     }
