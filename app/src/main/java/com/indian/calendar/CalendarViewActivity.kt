@@ -25,36 +25,30 @@ class CalendarViewActivity : AppCompatActivity() {
         tvMonthYear = findViewById(R.id.tvMonthYear)
         calendarViewPager = findViewById(R.id.calendarViewPager)
 
-        // અગાઉની સ્ક્રીન પરથી પસંદ કરેલ કેલેન્ડરનો ઇન્ડેક્સ મેળવો (ડિફોલ્ટ ૧ - ગુજરાતી)
-        selectedColIndex = intent.getIntExtra("COLUMN_INDEX", 1)
+        // અગાઉની સ્ક્રીન પરથી પસંદ કરેલ ઇન્ડેક્સ મેળવો
+        selectedColIndex = intent.getIntExtra("COLUMN_INDEX", 0)
 
-        fetchDataFromServer()
+        fetchDataFromSheet()
     }
 
-    private fun fetchDataFromServer() {
+    private fun fetchDataFromSheet() {
         RetrofitClient.instance.getCalendarData(selectedColIndex).enqueue(object : Callback<List<CalendarDayData>> {
             override fun onResponse(call: Call<List<CalendarDayData>>, response: Response<List<CalendarDayData>>) {
                 if (response.isSuccessful) {
-                    val dataList = response.body() ?: emptyList()
-                    // ડેટાને તારીખ મુજબ Map માં ગોઠવો જેથી શોધવામાં સરળતા રહે
-                    allSheetData = dataList.associateBy { it.date }
-                    setupViewPager()
-                } else {
-                    Toast.makeText(this@CalendarViewActivity, "સર્વર રિસ્પોન્સમાં ભૂલ છે", Toast.LENGTH_SHORT).show()
+                    allSheetData = response.body()?.associateBy { it.date } ?: emptyMap()
+                    setupCalendar()
                 }
             }
 
             override fun onFailure(call: Call<List<CalendarDayData>>, t: Throwable) {
-                Toast.makeText(this@CalendarViewActivity, "નેટવર્ક કનેક્શન તપાસો: ${t.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@CalendarViewActivity, "ભૂલ: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-    private fun setupViewPager() {
+    private fun setupCalendar() {
         val startCalendar = Calendar.getInstance()
-        // MonthPagerAdapter માં હવે શીટનો ડેટા પાસ થશે
-        val adapter = MonthPagerAdapter(this, startCalendar, allSheetData)
-        calendarViewPager.adapter = adapter
+        calendarViewPager.adapter = MonthPagerAdapter(this, startCalendar, allSheetData)
         calendarViewPager.setCurrentItem(500, false)
 
         calendarViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
