@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
     // તમારી નવી લિંક
-    private const val BASE_URL = "https://script.google.com/macros/s/AKfycby0axtqyL6yjPOsHjPtKYBdQtp5C6IbJADsh5QA22ADS8Z9hi5HY2y17dLUK3t0VOob/"
+    private const val BASE_URL = "https://script.google.com/macros/s/AKfycbyEBQpPWdz_7SjzjghU4IaMBlaR98LORop8qeGhBXmlfog028zg6TfdujX0RQzehUDH/"
 
     val instance: ApiService by lazy {
         val retrofit = Retrofit.Builder()
