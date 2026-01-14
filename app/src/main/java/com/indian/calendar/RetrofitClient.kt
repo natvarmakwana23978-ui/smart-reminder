@@ -6,9 +6,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL = "https://script.google.com/macros/s/AKfycbEBQpPWdz_7SjzjghU4IaMBIaR98LOrop8qeGhBXmlfog028zg6TfdujX0RQzehUDH/"
+    // અહીં ફક્ત ડોમેન નેમ જ રાખો, બાકીનું બધું ApiService માં જશે
+    private const val BASE_URL = "https://script.google.com/"
 
-    // ગૂગલના રીડાયરેક્ટ્સને હેન્ડલ કરવા માટે ક્લાયન્ટ
     private val client = OkHttpClient.Builder()
         .followRedirects(true)
         .followSslRedirects(true)
@@ -19,7 +19,7 @@ object RetrofitClient {
     val instance: ApiService by lazy {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(client) // આ ક્લાયન્ટ ઉમેરવો જરૂરી છે
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         retrofit.create(ApiService::class.java)
