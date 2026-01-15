@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.indian.calendar">
 
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -12,6 +13,7 @@
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
         android:usesCleartextTraffic="true">
 
+        <!-- Main launcher activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -21,14 +23,31 @@
             </intent-filter>
         </activity>
 
-        <activity 
+        <!-- Calendar selection and view activities -->
+        <activity
             android:name=".CalendarSelectionActivity"
             android:exported="false" />
-        
-        <activity 
+
+        <activity
             android:name=".CalendarViewActivity"
             android:exported="false" />
-        
-    </application>
 
-</manifest>
+        <activity
+            android:name=".RemindersActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ManageCalendarActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".LanguageSelectionActivity"
+            android:exported="false" />
+
+        <!-- Calendar Widget -->
+        <receiver
+            android:name=".CalendarWidget"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.ap
