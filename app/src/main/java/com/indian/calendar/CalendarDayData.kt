@@ -1,7 +1,8 @@
 package com.indian.calendar
 
 data class CalendarDayData(
-    val englishDate: String,
-    val localDate: String?,
-    val festival: String?
+    val date: String,
+    val tithi: String? = null,
+    val festival: String? = null,
+    val note: String? = null
 )
