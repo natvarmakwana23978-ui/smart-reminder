@@ -1,47 +1,75 @@
 package com.indian.calendar
 
+import android.content.Context
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+
+data class UserReminder(val time: String, val note: String) // simple model
 
 class RemindersActivity : AppCompatActivity() {
 
-    private lateinit var adapter: ReminderAdapter
-    private val taskList = mutableListOf<String>()
+    private lateinit var etNote: EditText
+    private lateinit var etTime: EditText
+    private lateinit var btnAdd: Button
+    private lateinit var lvReminders: ListView
+    private val remindersList = mutableListOf<UserReminder>()
+    private lateinit var adapter: ArrayAdapter<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reminders)
 
-        val editTask = findViewById<EditText>(R.id.editTask)
-        val btnAdd = findViewById<Button>(R.id.btnAdd)
-        val recyclerView = findViewById<RecyclerView>(R.id.reminderRecyclerView)
+        etNote = findViewById(R.id.etNote)
+        etTime = findViewById(R.id.etTime)
+        btnAdd = findViewById(R.id.btnAddReminder)
+        lvReminders = findViewById(R.id.lvReminders)
 
-        // એડેપ્ટર સેટઅપ કરવું (ડિલીટ ફંક્શન સાથે)
-        adapter = ReminderAdapter(taskList) { position ->
-            taskList.removeAt(position)
-            adapter.notifyDataSetChanged()
-            Toast.makeText(this, "કામ કાઢી નાખ્યું", Toast.LENGTH_SHORT).show()
-        }
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, remindersList.map { "${it.time} - ${it.note}" })
+        lvReminders.adapter = adapter
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+        loadReminders()
 
-        // 'ઉમેરો' બટન પર ક્લિક કરતા શું થશે?
         btnAdd.setOnClickListener {
-            val taskName = editTask.text.toString().trim()
-            if (taskName.isNotEmpty()) {
-                taskList.add(taskName)
-                adapter.notifyDataSetChanged()
-                editTask.text.clear() // ટાઈપ કરેલું લખાણ સાફ કરવું
+            val note = etNote.text.toString()
+            val time = etTime.text.toString()
+            if (note.isNotEmpty() && time.isNotEmpty()) {
+                val reminder = UserReminder(time, note)
+                remindersList.add(reminder)
+                saveReminders()
+                refreshList()
+                updateWidget()
             } else {
-                Toast.makeText(this, "કંઈક લખો...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Enter time and note", Toast.LENGTH_SHORT).show()
             }
         }
     }
-}
 
+    private fun refreshList() {
+        adapter.clear()
+        adapter.addAll(remindersList.map { "${it.time} - ${it.note}" })
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun saveReminders() {
+        val prefs = getSharedPreferences("RemindersPrefs", Context.MODE_PRIVATE)
+        val set = remindersList.map { "${it.time}|${it.note}" }.toSet()
+        prefs.edit().putStringSet("user_reminders", set).apply()
+    }
+
+    private fun loadReminders() {
+        val prefs = getSharedPreferences("RemindersPrefs", Context.MODE_PRIVATE)
+        val set = prefs.getStringSet("user_reminders", emptySet())
+        remindersList.clear()
+        set?.forEach {
+            val parts = it.split("|")
+            if (parts.size == 2) remindersList.add(UserReminder(parts[0], parts[1]))
+        }
+        refreshList()
+    }
+
+    private fun updateWidget() {
+        // trigger widget update
+        CalendarWidget.updateAllWidgets(this)
+    }
+}
