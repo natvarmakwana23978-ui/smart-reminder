@@ -1,18 +1,10 @@
-package com.indian.calendar
-
-import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Query
-
 interface ApiService {
-
-    // 🔹 Calendar list (Gujarati, Hindi, Islamic, etc.)
     @GET("exec")
-    fun getCalendars(): Call<List<CalendarModel>>
+    suspend fun getCalendars(): List<CalendarItem>
 
-    // 🔹 Selected calendar data (by column index)
     @GET("exec")
-    fun getCalendarData(
-        @Query("colIndex") colIndex: Int
-    ): Call<List<CalendarDayData>>
+    suspend fun getCalendarData(@Query("colIndex") colIndex: Int): List<CalendarData>
 }
+
+data class CalendarItem(val calendarName: String, val creatorName: String)
+data class CalendarData(val englishDate: String, val tithi: String?, val festival: String?)
