@@ -4,8 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import java.text.SimpleDateFormat
+import java.util.*
 
-data class UserReminder(val time: String, val note: String) // simple model
+data class UserReminder(val time: String, val note: String)
 
 class RemindersActivity : AppCompatActivity() {
 
@@ -16,6 +18,8 @@ class RemindersActivity : AppCompatActivity() {
     private val remindersList = mutableListOf<UserReminder>()
     private lateinit var adapter: ArrayAdapter<String>
 
+    private val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reminders)
@@ -25,10 +29,11 @@ class RemindersActivity : AppCompatActivity() {
         btnAdd = findViewById(R.id.btnAddReminder)
         lvReminders = findViewById(R.id.lvReminders)
 
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, remindersList.map { "${it.time} - ${it.note}" })
+        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf())
         lvReminders.adapter = adapter
 
         loadReminders()
+        refreshList()
 
         btnAdd.setOnClickListener {
             val note = etNote.text.toString()
@@ -38,16 +43,26 @@ class RemindersActivity : AppCompatActivity() {
                 remindersList.add(reminder)
                 saveReminders()
                 refreshList()
-                updateWidget()
+                CalendarWidget.updateAllWidgets(this)
             } else {
                 Toast.makeText(this, "Enter time and note", Toast.LENGTH_SHORT).show()
             }
         }
+
+        lvReminders.setOnItemLongClickListener { _, _, position, _ ->
+            // delete on long click
+            remindersList.removeAt(position)
+            saveReminders()
+            refreshList()
+            CalendarWidget.updateAllWidgets(this)
+            true
+        }
     }
 
     private fun refreshList() {
+        val list = remindersList.map { "${it.time} - ${it.note}" }
         adapter.clear()
-        adapter.addAll(remindersList.map { "${it.time} - ${it.note}" })
+        adapter.addAll(list)
         adapter.notifyDataSetChanged()
     }
 
@@ -59,17 +74,11 @@ class RemindersActivity : AppCompatActivity() {
 
     private fun loadReminders() {
         val prefs = getSharedPreferences("RemindersPrefs", Context.MODE_PRIVATE)
-        val set = prefs.getStringSet("user_reminders", emptySet())
+        val set = prefs.getStringSet("user_reminders", emptySet()) ?: emptySet()
         remindersList.clear()
-        set?.forEach {
+        set.forEach {
             val parts = it.split("|")
             if (parts.size == 2) remindersList.add(UserReminder(parts[0], parts[1]))
         }
-        refreshList()
-    }
-
-    private fun updateWidget() {
-        // trigger widget update
-        CalendarWidget.updateAllWidgets(this)
     }
 }
