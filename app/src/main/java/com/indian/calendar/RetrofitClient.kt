@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    // ફક્ત મુખ્ય ડોમેન જ રાખવું
+    // આ ફક્ત નામ પૂરતું છે, કારણ કે ApiService માં આપણે આખી લિંક આપી દીધી છે
     private const val BASE_URL = "https://script.google.com/"
 
     private val client = OkHttpClient.Builder()
