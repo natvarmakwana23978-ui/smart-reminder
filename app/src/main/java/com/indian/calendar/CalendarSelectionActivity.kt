@@ -18,16 +18,16 @@ class CalendarSelectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_calendar_view) // Make sure RecyclerView ID matches
+        setContentView(R.layout.activity_calendar_view)
 
-        // Initialize RecyclerView
+        // RecyclerView setup
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView)
         calendarRecyclerView.layoutManager = GridLayoutManager(this, 7)
         calendarAdapter = CalendarAdapter(emptyList())
         calendarRecyclerView.adapter = calendarAdapter
 
-        // Initialize ListView for calendar selection
-        calendarListView = findViewById(R.id.calendarListView) // Add ListView in layout
+        // ListView setup
+        calendarListView = findViewById(R.id.calendarListView)
         fetchCalendars()
     }
 
@@ -39,7 +39,6 @@ class CalendarSelectionActivity : AppCompatActivity() {
                 calendarList.addAll(response)
                 calendarListView.adapter = CalendarListAdapter(this@CalendarSelectionActivity, calendarList)
 
-                // Handle selection
                 calendarListView.setOnItemClickListener { _, _, position, _ ->
                     val selectedCalendar = calendarList[position]
                     val colIndex = position
