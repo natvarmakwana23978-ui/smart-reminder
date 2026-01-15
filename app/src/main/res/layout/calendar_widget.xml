@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:id="@+id/widget_root"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#FFFFFF"> <TextView
-        android:id="@+id/date_line_1"
-        android:layout_width="match_parent"
+    android:gravity="center"
+    android:background="@drawable/widget_background"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- English date -->
+    <TextView
+        android:id="@+id/tvWidgetDate"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Monday, 29 December 2025"
-        android:textColor="#000000"
+        android:text="15 Jan 2026"
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:textSize="16sp" />
+        android:gravity="center"/>
 
+    <!-- Local calendar info (tithi/festival) -->
     <TextView
-        android:id="@+id/date_line_2"
-        android:layout_width="match_parent"
+        android:id="@+id/tvWidgetTithi"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="કેલેન્ડર વિગત"
+        android:text="Purnima"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:paddingTop="2dp"/>
+
+    <!-- Next reminder -->
+    <TextView
+        android:id="@+id/tvWidgetReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next: Study 6 PM"
+        android:textSize="16sp"
         android:textColor="#FF5722"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/date_line_3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="તહેવારની માહિતી"
-        android:textColor="#4CAF50"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/date_line_4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="કોઈ નોંધ નથી"
-        android:textColor="#757575"
-        android:textSize="12sp"
-        android:fontFamily="sans-serif-condensed-light" />
-
+        android:gravity="center"
+        android:paddingTop="4dp"/>
 </LinearLayout>
