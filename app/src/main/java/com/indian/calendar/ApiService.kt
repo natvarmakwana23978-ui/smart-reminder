@@ -6,7 +6,7 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    // Calendar List (Gujarati, Hindi, etc.)
+    // Calendar List (Gujarati, Hindi, Islamic, etc.)
     @GET("exec")
     fun getCalendars(): Call<List<CalendarModel>>
 
