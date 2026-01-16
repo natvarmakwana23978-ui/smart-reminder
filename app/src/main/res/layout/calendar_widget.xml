@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/widget_root"
-    android:orientation="vertical"
-    android:padding="8dp"
-    android:gravity="center"
-    android:background="@drawable/widget_background"
+    android:id="@+id/widget_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#FFFFFF">
 
-    <!-- English date -->
     <TextView
-        android:id="@+id/tvWidgetDate"
-        android:layout_width="wrap_content"
+        android:id="@+id/line1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="15 Jan 2026"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:gravity="center"/>
+        android:textColor="#000000"
+        android:paddingBottom="2dp"/>
 
-    <!-- Local calendar info (tithi/festival) -->
     <TextView
-        android:id="@+id/tvWidgetTithi"
-        android:layout_width="wrap_content"
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Purnima"
         android:textSize="16sp"
-        android:gravity="center"
-        android:paddingTop="2dp"/>
+        android:textColor="#333333"
+        android:paddingBottom="2dp"/>
 
-    <!-- Next reminder -->
     <TextView
-        android:id="@+id/tvWidgetReminder"
-        android:layout_width="wrap_content"
+        android:id="@+id/line3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Next: Study 6 PM"
-        android:textSize="16sp"
-        android:textColor="#FF5722"
-        android:gravity="center"
-        android:paddingTop="4dp"/>
+        android:textSize="14sp"
+        android:textColor="#555555"
+        android:paddingBottom="2dp"/>
+
+    <TextView
+        android:id="@+id/line4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="#777777"/>
 </LinearLayout>
