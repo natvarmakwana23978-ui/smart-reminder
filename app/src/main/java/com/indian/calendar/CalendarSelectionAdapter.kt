@@ -3,16 +3,16 @@ package com.indian.calendar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.indian.calendar.model.CalendarDayData
-import kotlinx.parcelize.Parcelize
 
 class CalendarSelectionAdapter(
-    private val items: List<CalendarDayData>
+    private val items: List<CalendarItem>,
+    private val onItemClick: (CalendarItem) -> Unit
 ) : RecyclerView.Adapter<CalendarSelectionAdapter.ViewHolder>() {
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Initialize views here
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val txtName: TextView = view.findViewById(android.R.id.text1)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,10 +23,9 @@ class CalendarSelectionAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        // Bind data: use festival/reminder
-        // Example:
-        // holder.textView.text = item.festival ?: item.reminder ?: ""
+        holder.txtName.text = item.name
+        holder.itemView.setOnClickListener { onItemClick(item) }
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount() = items.size
 }
