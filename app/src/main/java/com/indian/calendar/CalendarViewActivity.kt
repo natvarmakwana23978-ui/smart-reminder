@@ -2,56 +2,56 @@ package com.indian.calendar
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.indian.calendar.model.CalendarDayData
-import java.util.Calendar
-
-data class CalendarData(val title: String)
+import org.json.JSONArray
+import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CalendarViewActivity : AppCompatActivity() {
-
-    // Calendar date → CalendarDayData
-    private val calendarMap: Map<String, CalendarDayData> = mapOf(
-        "2026-1-15" to CalendarDayData(
-            Date = "2026/01/15",
-            Gujarati_Month = "પોષ",
-            Tithi = "વદ-૫",
-            Day = "ગુરૂવાર",
-            Festival_English = "Pongal"
-        ),
-        "2026-1-16" to CalendarDayData(
-            Date = "2026/01/16",
-            Gujarati_Month = "પોષ",
-            Tithi = "વદ-૬",
-            Day = "શુક્રવાર",
-            Festival_English = "Makar Sankranti"
-        )
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view)
 
-        val calendar = Calendar.getInstance()
-        val todayDataList = getCalendarDataFor(calendar)
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerCalendar)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-        todayDataList.forEach {
-            println(it.title)
-        }
+        val todayData = getTodayCalendarData()
+        recyclerView.adapter = CalendarAdapter(listOf(todayData))
     }
 
-    private fun getCalendarDataFor(calendar: Calendar): List<CalendarData> {
-        val key = "${calendar.get(Calendar.YEAR)}-" +
-                "${calendar.get(Calendar.MONTH) + 1}-" +
-                "${calendar.get(Calendar.DAY_OF_MONTH)}"
+    private fun getTodayCalendarData(): CalendarDayData {
+        val jsonStream: InputStream = assets.open("calendar.json")
+        val jsonText = jsonStream.bufferedReader().use { it.readText() }
+        val jsonArray = JSONArray(jsonText)
 
-        val dayData = calendarMap[key] ?: return emptyList()
+        val today = Calendar.getInstance()
+        val sdf = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val todayStr = sdf.format(today.time)
 
-        val list = mutableListOf<CalendarData>()
-
-        if (dayData.Festival_English.isNotEmpty()) {
-            list.add(CalendarData("Festival: ${dayData.Festival_English}"))
+        for (i in 0 until jsonArray.length()) {
+            val obj = jsonArray.getJSONObject(i)
+            if (obj.getString("Date") == todayStr) {
+                return CalendarDayData(
+                    Date = obj.getString("Date"),
+                    Gujarati_Month = obj.getString("Gujarati_Month"),
+                    Tithi = obj.getString("Tithi"),
+                    Day = obj.getString("Day"),
+                    Festival_English = obj.optString("Festival_English", "")
+                )
+            }
         }
 
-        return list
+        // જો આજની તારીખ JSON માં ન મળે તો empty record
+        return CalendarDayData(
+            Date = todayStr,
+            Gujarati_Month = "",
+            Tithi = "",
+            Day = "",
+            Festival_English = ""
+        )
     }
 }
