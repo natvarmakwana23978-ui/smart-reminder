@@ -1,11 +1,18 @@
 package com.indian.calendar
 
-object CalendarRepository {
+import com.indian.calendar.model.CalendarDayData
 
-    var selectedCalendarIndex: Int = 0
+class CalendarRepository {
 
-    var calendars: List<CalendarItem> = emptyList()
-
-    var calendarData: List<CalendarDayData> = emptyList()
+    fun getDummyCalendar(): List<CalendarDayData> {
+        return listOf(
+            CalendarDayData(
+                Date = "2026/01/15",
+                Gujarati_Month = "પોષ",
+                Tithi = "વદ-૫",
+                Day = "ગુરૂવાર",
+                Festival_English = "Pongal"
+            )
+        )
+    }
 }
-
