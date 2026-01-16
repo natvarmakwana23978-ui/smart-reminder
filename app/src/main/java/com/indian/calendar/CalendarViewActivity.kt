@@ -9,10 +9,22 @@ data class CalendarData(val title: String)
 
 class CalendarViewActivity : AppCompatActivity() {
 
-    // Example: Map from CSV / database: "YYYY-M-D" -> CalendarDayData
+    // Calendar date → CalendarDayData
     private val calendarMap: Map<String, CalendarDayData> = mapOf(
-        "2026-1-15" to CalendarDayData(festival = "Pongal", reminder = "Meeting at 10AM"),
-        "2026-1-16" to CalendarDayData(festival = "Makar Sankranti")
+        "2026-1-15" to CalendarDayData(
+            Date = "2026/01/15",
+            Gujarati_Month = "પોષ",
+            Tithi = "વદ-૫",
+            Day = "ગુરૂવાર",
+            Festival_English = "Pongal"
+        ),
+        "2026-1-16" to CalendarDayData(
+            Date = "2026/01/16",
+            Gujarati_Month = "પોષ",
+            Tithi = "વદ-૬",
+            Day = "શુક્રવાર",
+            Festival_English = "Makar Sankranti"
+        )
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,21 +32,26 @@ class CalendarViewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_calendar_view)
 
         val calendar = Calendar.getInstance()
-        val todayDataList: List<CalendarData> = getCalendarDataFor(calendar)
+        val todayDataList = getCalendarDataFor(calendar)
 
-        todayDataList.forEach { println(it.title) }
+        todayDataList.forEach {
+            println(it.title)
+        }
     }
 
     private fun getCalendarDataFor(calendar: Calendar): List<CalendarData> {
         val key = "${calendar.get(Calendar.YEAR)}-" +
-                  "${calendar.get(Calendar.MONTH) + 1}-" +
-                  "${calendar.get(Calendar.DAY_OF_MONTH)}"
+                "${calendar.get(Calendar.MONTH) + 1}-" +
+                "${calendar.get(Calendar.DAY_OF_MONTH)}"
 
-        return calendarMap[key]?.let { dayData ->
-            val list = mutableListOf<CalendarData>()
-            dayData.festival?.let { list.add(CalendarData("Festival: $it")) }
-            dayData.reminder?.let { list.add(CalendarData("Reminder: $it")) }
-            list
-        } ?: emptyList()
+        val dayData = calendarMap[key] ?: return emptyList()
+
+        val list = mutableListOf<CalendarData>()
+
+        if (dayData.Festival_English.isNotEmpty()) {
+            list.add(CalendarData("Festival: ${dayData.Festival_English}"))
+        }
+
+        return list
     }
 }
