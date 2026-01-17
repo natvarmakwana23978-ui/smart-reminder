@@ -9,43 +9,17 @@ import androidx.fragment.app.Fragment
 import com.indian.calendar.model.CalendarDayData
 
 class CalendarDayFragment : Fragment() {
-
-    private lateinit var dayData: CalendarDayData
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        dayData = requireArguments().getParcelable(ARG_DATA)!!
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_calendar_day, container, false)
+        val dayData = arguments?.getParcelable<CalendarDayData>("day_data")
 
-        view.findViewById<TextView>(R.id.line1).text =
-            dayData.Date
+        val txtDate = view.findViewById<TextView>(R.id.txtDate)
+        val txtDetail = view.findViewById<TextView>(R.id.txtDetail)
 
-        view.findViewById<TextView>(R.id.line2).text =
-            "${dayData.Gujarati_Month} ${dayData.Tithi}, ${dayData.Day}"
-
-        view.findViewById<TextView>(R.id.line3).text =
-            dayData.Festival_English
-
+        dayData?.let {
+            txtDate.text = it.Date // ENGLISH તારીખ
+            txtDetail.text = it.Gujarati // ગુજરાતી વિગત (તિથિ/તહેવાર)
+        }
         return view
     }
-
-    companion object {
-        private const val ARG_DATA = "calendar_data"
-
-        fun newInstance(data: CalendarDayData): CalendarDayFragment {
-            val fragment = CalendarDayFragment()
-            fragment.arguments = Bundle().apply {
-                putParcelable(ARG_DATA, data)
-            }
-            return fragment
-        }
-    }
 }
-
