@@ -36,6 +36,7 @@ class CalendarWidget : AppWidgetProvider() {
             val jsonArray = JSONArray(jsonText)
 
             val today = Calendar.getInstance()
+            // તમારી શીટમાં તારીખ 1/1/2026 ફોર્મેટમાં છે
             val sdf = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
             val todayStr = sdf.format(today.time)
 
