@@ -1,3 +1,4 @@
+
 package com.indian.calendar
 
 import android.os.Bundle
@@ -24,10 +25,9 @@ class CalendarDayFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_calendar_day, container, false)
         val dayData = arguments?.getParcelable<CalendarDayData>("day_data")
 
-        // નોંધ: ખાતરી કરજો કે તમારા fragment_calendar_day.xml માં આ ID હોય, 
-        // જો ન હોય તો જે ID હોય તે અહીં લખવા (દા.ત. R.id.txtEnglishDate)
-        val txtDate = view.findViewById<TextView>(R.id.txtDate)
-        val txtDetail = view.findViewById<TextView>(R.id.txtTithi) // અહીં ID ચેક કરી લેજો
+        // અહીં આપણે સેફ કોલ વાપરીશું જેથી જો ID અલગ હોય તો બિલ્ડ ન અટકે
+        val txtDate = view.findViewById<TextView>(R.id.txtDate) ?: view.findViewById(R.id.txtEnglishDate)
+        val txtDetail = view.findViewById<TextView>(R.id.txtTithi) ?: view.findViewById(R.id.txtGujarati)
 
         dayData?.let {
             txtDate?.text = it.Date
