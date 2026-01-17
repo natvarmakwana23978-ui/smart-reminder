@@ -1,14 +1,17 @@
 package com.indian.calendar
 
 import android.os.Bundle
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.indian.calendar.model.CalendarDayData
-import org.json.JSONArray
-import java.io.InputStream
-import java.text.SimpleDateFormat
-import java.util.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CalendarViewActivity : AppCompatActivity() {
 
@@ -16,42 +19,34 @@ class CalendarViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerCalendar)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        val titleTxt = findViewById<TextView>(R.id.calendarTitle)
+        val recyclerView = findViewById<RecyclerView>(R.id.calendarRecyclerView)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
 
-        val todayData = getTodayCalendarData()
-        recyclerView.adapter = CalendarAdapter(listOf(todayData))
-    }
+        // અગાઉની સ્ક્રીન પરથી મોકલેલો ડેટા મેળવવો
+        val colIndex = intent.getIntExtra("COL_INDEX", 1)
+        val calendarName = intent.getStringExtra("CALENDAR_NAME") ?: "Calendar"
+        titleTxt.text = calendarName
 
-    private fun getTodayCalendarData(): CalendarDayData {
-        val jsonStream: InputStream = assets.open("calendar.json")
-        val jsonText = jsonStream.bufferedReader().use { it.readText() }
-        val jsonArray = JSONArray(jsonText)
+        // કેલેન્ડર માટે ૭ કોલમનું ગ્રીડ (સોમ થી રવિ)
+        recyclerView.layoutManager = GridLayoutManager(this, 7)
 
-        val today = Calendar.getInstance()
-        val sdf = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
-        val todayStr = sdf.format(today.time)
+        progressBar.visibility = View.VISIBLE
 
-        for (i in 0 until jsonArray.length()) {
-            val obj = jsonArray.getJSONObject(i)
-            if (obj.getString("Date") == todayStr) {
-                return CalendarDayData(
-                    Date = obj.getString("Date"),
-                    Gujarati_Month = obj.getString("Gujarati_Month"),
-                    Tithi = obj.getString("Tithi"),
-                    Day = obj.getString("Day"),
-                    Festival_English = obj.optString("Festival_English", "")
-                )
+        // Retrofit દ્વારા ડેટા લોડ કરવો
+        RetrofitClient.api.getCalendarData(colIndex).enqueue(object : Callback<List<CalendarDayData>> {
+            override fun onResponse(call: Call<List<CalendarDayData>>, response: Response<List<CalendarDayData>>) {
+                progressBar.visibility = View.GONE
+                if (response.isSuccessful) {
+                    val data = response.body() ?: emptyList()
+                    // આગલા સ્ટેપમાં આપણે અહીં એડપ્ટર સેટ કરીશું
+                }
             }
-        }
 
-        // જો આજની તારીખ JSON માં ન મળે
-        return CalendarDayData(
-            Date = todayStr,
-            Gujarati_Month = "",
-            Tithi = "",
-            Day = "",
-            Festival_English = ""
-        )
+            override fun onFailure(call: Call<List<CalendarDayData>>, t: Throwable) {
+                progressBar.visibility = View.GONE
+                Toast.makeText(this@CalendarViewActivity, "નેટવર્ક એરર: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }
