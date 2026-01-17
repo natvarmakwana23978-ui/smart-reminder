@@ -29,12 +29,18 @@ class CalendarSelectionActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val calendars = response.body() ?: emptyList()
+                    
+                    // અહીં ચેક કરો કે તમે કયા એડપ્ટરનું નામ લખ્યું છે
                     recyclerView.adapter = CalendarSelectionAdapter(calendars) { selectedItem ->
-                        // આ ક્લિક લોજિક ડેટા પાસ કરશે
-                        val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
-                        intent.putExtra("COL_INDEX", selectedItem.colIndex)
-                        intent.putExtra("CALENDAR_NAME", selectedItem.calendarName)
-                        startActivity(intent)
+                        try {
+                            // Activity ખોલવા માટેનું લોજિક
+                            val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
+                            intent.putExtra("COL_INDEX", selectedItem.colIndex)
+                            intent.putExtra("CALENDAR_NAME", selectedItem.calendarName)
+                            startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(this@CalendarSelectionActivity, "ભૂલ: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
