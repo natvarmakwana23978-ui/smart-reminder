@@ -24,6 +24,10 @@
             android:name=".CalendarSelectionActivity"
             android:exported="false" />
 
+        <activity 
+            android:name=".CalendarViewActivity"
+            android:exported="false" />
+
         <receiver
             android:name=".CalendarWidgetProvider"
             android:exported="false">
