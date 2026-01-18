@@ -3,35 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:padding="8dp"
     android:gravity="center"
-    android:padding="4dp"
-    android:background="?attr/selectableItemBackground">
+    android:background="?android:attr/selectableItemBackground">
 
     <TextView
-        android:id="@+id/txtEnglishDate"
+        android:id="@+id/txtDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textStyle="bold"
         android:textColor="#000000"
-        android:text="1"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtTithi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="10sp"
-        android:textColor="#555555"
-        android:text="સુદ-૧"
-        android:gravity="center"/>
-
-    <TextView
-        android:id="@+id/txtFestival"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="8sp"
-        android:textColor="#FF0000"
-        android:text=""
-        android:gravity="center"
-        android:maxLines="1"/>
+        android:textColor="#666666"
+        android:gravity="center" />
 </LinearLayout>
