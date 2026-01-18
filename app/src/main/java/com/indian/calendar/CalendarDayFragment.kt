@@ -21,22 +21,22 @@ class CalendarDayFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        // fragment_calendar_day લેઆઉટ ઇન્ફ્લેટ કરો
         val view = inflater.inflate(R.layout.fragment_calendar_day, container, false)
         val dayData = arguments?.getParcelable<CalendarDayData>("day_data")
 
-        // અહીં આપણે સેફ કોલ વાપરીશું. 
-        // જો txtDate ન મળે, તો તે txtEnglishDate શોધશે.
-        val txtDate = view.findViewById<TextView>(R.id.txtDate) 
-            ?: view.findViewById<TextView>(R.id.txtEnglishDate)
-            
-        // જો txtGujarati ન મળે, તો તે txtTithi શોધશે.
-        val txtDetail = view.findViewById<TextView>(R.id.txtGujarati) 
-            ?: view.findViewById<TextView>(R.id.txtTithi)
-
-        dayData?.let {
-            txtDate?.text = it.Date
-            txtDetail?.text = it.Gujarati
+        // જો સાચા ID ન મળતા હોય, તો આખા વ્યુમાં રહેલા TextView શોધો
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val child = view.getChildAt(i)
+                if (child is TextView) {
+                    // પ્રથમ TextView માં તારીખ અને બીજામાં વિગત મૂકો (જો ID ખબર ન હોય તો આ દેશી જુગાડ છે)
+                    if (i == 0) child.text = dayData?.Date
+                    if (i == 1) child.text = dayData?.Gujarati
+                }
+            }
         }
+
         return view
     }
 }
