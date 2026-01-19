@@ -29,21 +29,23 @@ class CalendarSelectionActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful && response.body() != null) {
                     val calendars = response.body()!!
+                    Log.d("CALENDAR_DATA", "Size: ${calendars.size}")
+                    if (calendars.isEmpty()) {
+                        Toast.makeText(this@CalendarSelectionActivity, "લિસ્ટ ખાલી છે", Toast.LENGTH_SHORT).show()
+                    }
                     recyclerView.adapter = CalendarSelectionAdapter(calendars) { item ->
                         val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
-                        intent.putExtra("COL_INDEX", item.id.toIntOrNull() ?: 1)
+                        intent.putExtra("COL_INDEX", item.id?.toIntOrNull() ?: 1)
                         intent.putExtra("CALENDAR_NAME", item.name)
                         startActivity(intent)
                     }
                 } else {
-                    Log.e("API_ERROR", "Response code: ${response.code()}")
-                    Toast.makeText(this@CalendarSelectionActivity, "સર્વર ભૂલ: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Log.e("API_ERROR", "Error Code: ${response.code()}")
                 }
             }
             override fun onFailure(call: Call<List<CalendarItem>>, t: Throwable) {
                 progressBar.visibility = View.GONE
-                Log.e("API_FAILURE", t.message ?: "Unknown error")
-                Toast.makeText(this@CalendarSelectionActivity, "નેટવર્ક એરર: ${t.message}", Toast.LENGTH_SHORT).show()
+                Log.e("API_FAILURE", "Error: ${t.message}")
             }
         })
     }
