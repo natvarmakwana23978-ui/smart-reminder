@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.widget.RemoteViews
-import com.indian.calendar.model.CalendarDayData
+// model ઈમ્પોર્ટ હટાવી દીધો છે
 import org.json.JSONArray
 import java.io.InputStream
 import java.text.SimpleDateFormat
@@ -21,7 +21,7 @@ class CalendarWidgetProvider : AppWidgetProvider() {
             views.setTextViewText(R.id.line1, todayData.Date) 
             views.setTextViewText(R.id.line2, todayData.Gujarati) 
             
-            // લાઈન ૩ અને ૪ માં અત્યારે કશું નથી બતાવવું કારણ કે જૂની કોલમ્સ નીકળી ગઈ છે
+            // લાઈન ૩ અને ૪ માં અત્યારે કશું નથી બતાવવું
             views.setTextViewText(R.id.line3, "") 
             views.setTextViewText(R.id.line4, "") 
 
