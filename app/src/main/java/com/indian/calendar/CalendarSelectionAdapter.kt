@@ -1,5 +1,6 @@
 package com.indian.calendar
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ class CalendarSelectionAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.txtName.text = item.name
+        holder.txtName.setTextColor(Color.BLACK) // અક્ષરો કાળા કરવા માટે
         holder.itemView.setOnClickListener { onClick(item) }
     }
 
