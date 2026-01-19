@@ -1,8 +1,8 @@
-package com.indian.calendar.model
+package com.indian.calendar
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CalendarDayData(
@@ -19,7 +19,7 @@ data class CalendarDayData(
     @SerializedName("नेपाली (Nepali)") val Nepali: String = "",
     @SerializedName("中文 (Chinese)") val Chinese: String = "",
     @SerializedName("עברית (Hebrew)") val Hebrew: String = "",
-    @SerializedName("فارસી (Persian)") val Persian: String = "",
+    @SerializedName("فારસી (Persian)") val Persian: String = "",
     @SerializedName("ኢትዮጵያ (Ethiopian)") val Ethiopian: String = "",
     @SerializedName("Basa Bali (Balinese)") val Balinese: String = "",
     @SerializedName("한국어 (Korean)") val Korean: String = "",
