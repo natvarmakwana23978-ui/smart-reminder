@@ -1,15 +1,41 @@
-override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-    val day = days[position]
-    holder.txtDate.text = day.Date
-    
-    // જે કોલમ સિલેક્ટ કરી હોય તેની તિથિ બતાવશે
-    holder.txtTithi.text = when(colIndex) {
-        1 -> day.Gujarati
-        2 -> day.Hindi
-        else -> day.Gujarati
+package com.indian.calendar
+
+import android.graphics.Color
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class CalendarDayAdapter(
+    private val days: List<CalendarDayData>, 
+    private val colIndex: Int
+) : RecyclerView.Adapter<CalendarDayAdapter.ViewHolder>() {
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val txtDate: TextView = view.findViewById(R.id.txtDate)
+        val txtTithi: TextView = view.findViewById(R.id.txtTithi)
+        val txtAlertBanner: TextView = view.findViewById(R.id.txtAlertBanner)
+        val txtTomorrowNote: TextView = view.findViewById(R.id.txtTomorrowNote)
     }
 
-    // જો ગૂગલ શીટમાં 'Warning' વાળા ખાનામાં લખાણ હોય તો જ લાલ પટ્ટી બતાવવી
-    // તમારી શીટ મુજબ અહીં લોજિક સેટ કરવું
-    holder.txtAlertBanner.visibility = View.GONE 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_day, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val day = days[position]
+        holder.txtDate.text = day.Date
+        holder.txtDate.setTextColor(Color.BLACK)
+
+        holder.txtTithi.text = when(colIndex) {
+            1 -> day.Gujarati
+            2 -> day.Hindi
+            else -> day.Gujarati
+        }
+        holder.txtTithi.setTextColor(Color.BLACK)
+    }
+
+    override fun getItemCount() = days.size
 }
