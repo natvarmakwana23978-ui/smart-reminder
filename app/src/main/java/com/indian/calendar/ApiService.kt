@@ -7,11 +7,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
-    // કેલેન્ડરનું લિસ્ટ મેળવવા માટે
     @GET("exec")
     fun getCalendars(@Query("action") action: String = "getCalendars"): Call<List<CalendarItem>>
 
-    // જે-તે ભાષાનો ડેટા (૨૬ ભાષા) મેળવવા માટે [cite: 2026-01-07]
     @GET("exec")
     fun getCalendarData(
         @Query("colIndex") colIndex: Int,
