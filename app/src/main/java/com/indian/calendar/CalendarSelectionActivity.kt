@@ -23,21 +23,25 @@ class CalendarSelectionActivity : AppCompatActivity() {
 
         progressBar.visibility = View.VISIBLE
 
-        RetrofitClient.api.getCalendars().enqueue(object : Callback<List<CalendarItem>> {
+        // "getCalendars" એક્શન દ્વારા લિસ્ટ મંગાવવું
+        RetrofitClient.api.getCalendars("getCalendars").enqueue(object : Callback<List<CalendarItem>> {
             override fun onResponse(call: Call<List<CalendarItem>>, response: Response<List<CalendarItem>>) {
                 progressBar.visibility = View.GONE
-                if (response.isSuccessful) {
-                    val calendars = response.body() ?: emptyList()
-                    recyclerView.adapter = CalendarSelectionAdapter(calendars) { item: CalendarItem ->
+                if (response.isSuccessful && response.body() != null) {
+                    val calendars = response.body()!!
+                    recyclerView.adapter = CalendarSelectionAdapter(calendars) { item ->
                         val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
                         intent.putExtra("COL_INDEX", item.id.toIntOrNull() ?: 1)
                         intent.putExtra("CALENDAR_NAME", item.name)
                         startActivity(intent)
                     }
+                } else {
+                    Toast.makeText(this@CalendarSelectionActivity, "લિસ્ટ લોડ કરવામાં ભૂલ આવી", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<CalendarItem>>, t: Throwable) {
                 progressBar.visibility = View.GONE
+                Toast.makeText(this@CalendarSelectionActivity, "નેટવર્ક એરર: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
