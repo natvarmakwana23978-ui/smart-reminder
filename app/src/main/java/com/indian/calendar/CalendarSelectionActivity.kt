@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.indian.calendar.model.CalendarItem
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,7 +28,6 @@ class CalendarSelectionActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val calendars = response.body() ?: emptyList()
-                    // અહીં આપણે સ્પષ્ટપણે CalendarItem ટાઇપ લખી છે જેથી એરર ન આવે
                     recyclerView.adapter = CalendarSelectionAdapter(calendars) { item: CalendarItem ->
                         val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
                         intent.putExtra("COL_INDEX", item.id.toIntOrNull() ?: 1)
@@ -38,10 +36,8 @@ class CalendarSelectionActivity : AppCompatActivity() {
                     }
                 }
             }
-
             override fun onFailure(call: Call<List<CalendarItem>>, t: Throwable) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(this@CalendarSelectionActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
