@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="6dp"
+    app:cardElevation="4dp"
     app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
@@ -13,18 +13,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
-
-        <TextView
-            android:id="@+id/txtAlertBanner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:background="#FF0000"
-            android:padding="10dp"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,14 +39,13 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/txtTomorrowNote"
+            android:id="@+id/txtAlertBanner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="#E3F2FD"
+            android:layout_marginTop="8dp"
+            android:background="#FF0000"
             android:padding="8dp"
-            android:textColor="#1565C0"
-            android:textSize="14sp"
+            android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:visibility="gone" />
 
