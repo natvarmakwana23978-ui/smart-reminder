@@ -1,6 +1,8 @@
 package com.indian.calendar
 
+import com.google.gson.annotations.SerializedName
+
 data class CalendarItem(
-    val id: String = "",
-    val name: String = ""
+    @SerializedName("id") val id: String = "",
+    @SerializedName("name") val name: String = ""
 )
