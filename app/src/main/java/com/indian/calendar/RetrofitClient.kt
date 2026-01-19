@@ -1,25 +1,15 @@
 package com.indian.calendar
 
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-
-    private const val BASE_URL =
-        "https://script.google.com/macros/s/AKfycbzsFfM_jo2P_PmCtDyccoC6KIubETZxjAnAtwLBTJRtidKIicS5cKf9l5KrMC9TDRWt/"
-
-    private val okHttp = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .followRedirects(true)
-        .build()
+    // તમારી ગૂગલ શીટ વેબ એપની સાચી લિંક અહીં મુકવી
+    private const val BASE_URL = "https://script.google.com/macros/s/AKfycbzpzJAnAzBSb6Y0Hen2e8jg81Bp8DB7zOlWyAf9lKn5PmqiduqPyk7hT95-2nXpWA6q/exec" 
 
     val api: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(okHttp)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
