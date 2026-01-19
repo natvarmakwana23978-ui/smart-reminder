@@ -1,6 +1,2 @@
 package com.indian.calendar.model
-
-data class CalendarItem(
-    val id: String = "",
-    val name: String = ""
-)
+data class CalendarItem(val id: String = "", val name: String = "")
