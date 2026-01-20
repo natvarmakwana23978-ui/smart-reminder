@@ -1,11 +1,9 @@
 package com.indian.calendar
 
 import android.os.Bundle
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.*
-// model ઈમ્પોર્ટ હટાવી દીધો છે
 import retrofit2.*
 
 class CalendarViewActivity : AppCompatActivity() {
@@ -22,15 +20,15 @@ class CalendarViewActivity : AppCompatActivity() {
 
         setupMonthButtons()
         
-        // જો ઇન્ટેન્ટમાં ડેટા ન હોય તો ડિફોલ્ટ ૧ નંબર (ગુજરાતી) લોડ થશે
-        loadData(intent.getIntExtra("COL_INDEX", 1))
+        // ઇન્ટેન્ટમાંથી ઇન્ડેક્સ મેળવો અથવા ડિફોલ્ટ ૧
+        val colIndex = intent.getIntExtra("COL_INDEX", 1)
+        loadData(colIndex)
     }
 
     private fun setupMonthButtons() {
         for (i in 1..12) {
             val btn = Button(this).apply {
                 text = i.toString()
-                // મહિના મુજબ સ્ક્રોલ કરવાનું લોજિક
                 setOnClickListener { 
                     (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset((i - 1) * 31, 0) 
                 }
@@ -40,15 +38,20 @@ class CalendarViewActivity : AppCompatActivity() {
     }
 
     private fun loadData(colIndex: Int) {
-        RetrofitClient.api.getCalendarData(colIndex).enqueue(object : Callback<List<CalendarDayData>> {
-            override fun onResponse(call: Call<List<CalendarDayData>>, response: Response<List<CalendarDayData>>) {
-                if (response.isSuccessful) {
-                    recyclerView.adapter = CalendarDayAdapter(response.body() ?: emptyList(), colIndex)
+        // અહીં સુધારો કર્યો છે: 'action' અને 'colIndex' બંને નામ સાથે મોકલ્યા છે
+        RetrofitClient.api.getCalendarData(action = "getCalendarDays", colIndex = colIndex)
+            .enqueue(object : Callback<List<CalendarDayData>> {
+                override fun onResponse(call: Call<List<CalendarDayData>>, response: Response<List<CalendarDayData>>) {
+                    if (response.isSuccessful) {
+                        recyclerView.adapter = CalendarDayAdapter(response.body() ?: emptyList(), colIndex)
+                    } else {
+                        Toast.makeText(this@CalendarViewActivity, "ડેટા નથી મળ્યો", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-            override fun onFailure(call: Call<List<CalendarDayData>>, t: Throwable) {
-                Toast.makeText(this@CalendarViewActivity, "નેટવર્ક એરર: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+
+                override fun onFailure(call: Call<List<CalendarDayData>>, t: Throwable) {
+                    Toast.makeText(this@CalendarViewActivity, "નેટવર્ક એરર: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 }
