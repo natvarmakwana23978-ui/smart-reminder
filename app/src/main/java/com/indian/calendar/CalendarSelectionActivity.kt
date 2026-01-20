@@ -18,13 +18,15 @@ class CalendarSelectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_calendar_selection)
-
-        recyclerView = findViewById(R.id.calendarRecyclerView)
-        progressBar = findViewById(R.id.progressBar)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        loadCalendars()
+        try {
+            setContentView(R.layout.activity_calendar_selection)
+            recyclerView = findViewById(R.id.calendarRecyclerView)
+            progressBar = findViewById(R.id.progressBar)
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            loadCalendars()
+        } catch (e: Exception) {
+            Toast.makeText(this, "ડિઝાઇન લોડ કરવામાં ભૂલ: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun loadCalendars() {
@@ -34,19 +36,18 @@ class CalendarSelectionActivity : AppCompatActivity() {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val list = response.body() ?: emptyList()
-                    // આપણે અહીં CalendarSelectionAdapter નો ઉપયોગ કરીએ છીએ [cite: 2026-01-20]
                     recyclerView.adapter = CalendarSelectionAdapter(list) { item ->
                         val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
                         intent.putExtra("COL_INDEX", item.id?.toIntOrNull() ?: 1)
                         startActivity(intent)
                     }
                 } else {
-                    Toast.makeText(this@CalendarSelectionActivity, "સર્વર એરર: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CalendarSelectionActivity, "સર્વર ભૂલ", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<CalendarItem>>, t: Throwable) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(this@CalendarSelectionActivity, "નેટવર્ક એરર: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CalendarSelectionActivity, "કનેક્શન નિષ્ફળ", Toast.LENGTH_SHORT).show()
             }
         })
     }
