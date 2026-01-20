@@ -1,32 +1,15 @@
 package com.indian.calendar
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 
 class LanguageSelectionActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_language_selection)
-
-        // લિસ્ટમાંથી આવેલું કેલેન્ડર નામ
-        val calendarName = intent.getStringExtra("calendar_name") ?: "Default"
-
-        findViewById<Button>(R.id.btnGujarati).setOnClickListener { setLanguage("gu", calendarName) }
-        findViewById<Button>(R.id.btnHindi).setOnClickListener { setLanguage("hi", calendarName) }
-        findViewById<Button>(R.id.btnEnglish).setOnClickListener { setLanguage("en", calendarName) }
-    }
-
-    private fun setLanguage(langCode: String, calendarName: String) {
-        val sharedPref = getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
-        sharedPref.edit().putString("selected_lang", langCode).apply()
-
-        // કેલેન્ડર વ્યુ ખોલવો
-        val intent = Intent(this, CalendarViewActivity::class.java)
-        intent.putExtra("calendar_name", calendarName)
+        
+        // આપણે સીધા જ કેલેન્ડર લિસ્ટ વાળી સ્ક્રીન પર જઈશું, જેથી કોઈ બટનની માથાકૂટ ન રહે [cite: 2026-01-20]
+        val intent = Intent(this, CalendarSelectionActivity::class.java)
         startActivity(intent)
         finish()
     }
