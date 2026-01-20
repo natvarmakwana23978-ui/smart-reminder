@@ -20,12 +20,15 @@ class CalendarSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         try {
             setContentView(R.layout.activity_calendar_selection)
+            
             recyclerView = findViewById(R.id.calendarRecyclerView)
             progressBar = findViewById(R.id.progressBar)
             recyclerView.layoutManager = LinearLayoutManager(this)
+
             loadCalendars()
         } catch (e: Exception) {
-            Toast.makeText(this, "ડિઝાઇન લોડ કરવામાં ભૂલ: ${e.message}", Toast.LENGTH_LONG).show()
+            // જો લેઆઉટમાં ભૂલ હશે તો અહીં મેસેજ આવશે [cite: 2026-01-20]
+            Toast.makeText(this, "ક્રેશ બચાવવા માટેનો મેસેજ: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -42,12 +45,12 @@ class CalendarSelectionActivity : AppCompatActivity() {
                         startActivity(intent)
                     }
                 } else {
-                    Toast.makeText(this@CalendarSelectionActivity, "સર્વર ભૂલ", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CalendarSelectionActivity, "સર્વરથી ડેટા મળ્યો નથી", Toast.LENGTH_SHORT).show()
                 }
             }
             override fun onFailure(call: Call<List<CalendarItem>>, t: Throwable) {
                 progressBar.visibility = View.GONE
-                Toast.makeText(this@CalendarSelectionActivity, "કનેક્શન નિષ્ફળ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CalendarSelectionActivity, "નેટવર્ક કનેક્શન નથી", Toast.LENGTH_SHORT).show()
             }
         })
     }
