@@ -24,7 +24,7 @@ class CalendarSelectionActivity : AppCompatActivity() {
 
         progressBar.visibility = View.VISIBLE
 
-        RetrofitClient.api.getCalendars("getCalendars").enqueue(object : Callback<List<CalendarItem>> {
+        RetrofitClient.api.getCalendars().enqueue(object : Callback<List<CalendarItem>> {
             override fun onResponse(call: Call<List<CalendarItem>>, response: Response<List<CalendarItem>>) {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful && response.body() != null) {
