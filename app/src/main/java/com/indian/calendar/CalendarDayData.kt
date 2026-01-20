@@ -9,12 +9,18 @@ data class CalendarDayData(
     @SerializedName("ENGLISH") val Date: String = "",
     @SerializedName("ગુજરાતી (Gujarati)") val Gujarati: String = "",
     @SerializedName("हिन्दी (Hindi)") val Hindi: String = "",
+    
+    // આ ત્રણ લાઈન મેં ખાસ ઉમેરી છે જે એરર દૂર કરશે
+    @SerializedName("Marathi") val Marathi: String = "",
+    @SerializedName("Sanskrit") val Sanskrit: String = "",
+    @SerializedName("Alert") val Alert: String = "",
+    
     @SerializedName("ઇસ્લામિક (Islamic - العربية)") val Islamic: String = "",
     @SerializedName("తెలుగు/ಕನ್ನಡ (Telugu/Kannada)") val TeluguKannada: String = "",
     @SerializedName("தமிழ் (Tamil)") val Tamil: String = "",
     @SerializedName("മലയാളം (Malayalam)") val Malayalam: String = "",
     @SerializedName("ਪੰਜਾਬੀ (Punjabi)") val Punjabi: String = "",
-    @SerializedName("ଓଡ଼િଆ (Odia)") val Odia: String = "",
+    @SerializedName("ଓડ଼િଆ (Odia)") val Odia: String = "",
     @SerializedName("বাংলা (Bengali)") val Bengali: String = "",
     @SerializedName("नेपाली (Nepali)") val Nepali: String = "",
     @SerializedName("中文 (Chinese)") val Chinese: String = "",
@@ -30,7 +36,7 @@ data class CalendarDayData(
     @SerializedName("کاشمیری (Kashmiri)") val Kashmiri: String = "",
     @SerializedName("મારવાડી (Marwari)") val Marwari: String = "",
     @SerializedName("日本語 (Japanese)") val Japanese: String = "",
-    @SerializedName("অসমীয়া (Assamese)") val Assamese: String = "",
+    @SerializedName("অસમীયા (Assamese)") val Assamese: String = "",
     @SerializedName("سنڌી (Sindhi)") val Sindhi: String = "",
-    @SerializedName("བོད་སྐད (Tibetan)") val Tibetan: String = ""
+    @SerializedName("བོད་སྐદ (Tibetan)") val Tibetan: String = ""
 ) : Parcelable
