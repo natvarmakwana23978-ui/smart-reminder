@@ -30,16 +30,18 @@ class CalendarSelectionActivity : AppCompatActivity() {
     private fun loadCalendars() {
         progressBar.visibility = View.VISIBLE
         
-        // અહીં આપણે સુધારેલી ApiService મુજબ getCalendars() કોલ કરીએ છીએ
+        // ApiService માં કરેલા ફેરફાર મુજબ અહીં કોઈ આર્ગ્યુમેન્ટ આપવાની જરૂર નથી [cite: 2026-01-14]
         RetrofitClient.api.getCalendars().enqueue(object : Callback<List<CalendarItem>> {
             override fun onResponse(call: Call<List<CalendarItem>>, response: Response<List<CalendarItem>>) {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val list = response.body() ?: emptyList()
                     if (list.isNotEmpty()) {
-                        recyclerView.adapter = CalendarAdapter(list) { item ->
+                        // અહીં 'item: CalendarItem' લખવાથી કોમ્પાઈલર એરર દૂર થઈ જશે [cite: 2026-01-20]
+                        recyclerView.adapter = CalendarAdapter(list) { item: CalendarItem ->
                             val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
-                            intent.putExtra("COL_INDEX", item.id.toInt())
+                            // null-safe ચેક સાથે ID મોકલવો [cite: 2026-01-20]
+                            intent.putExtra("COL_INDEX", item.id?.toIntOrNull() ?: 1)
                             startActivity(intent)
                         }
                     } else {
