@@ -1,23 +1,12 @@
-package com.indian.calendar
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-
-class CalendarAdapter(private val days: List<CalendarDayData>) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val eng: TextView = v.findViewById(R.id.tvEnglishDate)
-        val loc: TextView = v.findViewById(R.id.tvLocalDate)
-        val alert: TextView = v.findViewById(R.id.tvAlert)
-    }
-    override fun onCreateViewHolder(p: ViewGroup, t: Int) = ViewHolder(LayoutInflater.from(p.context).inflate(R.layout.item_calendar_day, p, false))
-    override fun onBindViewHolder(h: ViewHolder, pos: Int) {
-        val d = days[pos]
-        h.eng.text = d.englishDate?.split("-")?.get(0) ?: ""
-        h.loc.text = d.localDate ?: ""
-        h.alert.visibility = if (d.alert.isNullOrEmpty()) View.GONE else View.VISIBLE
-        h.alert.text = d.alert
-    }
-    override fun getItemCount() = days.size
+override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    val day = days[position]
+    
+    // "Thu Jan 01 2026 00:0" માંથી માત્ર "01" અલગ પાડવા માટે [cite: 2026-01-21]
+    val parts = day.englishDate?.split(" ")
+    val dateNumber = if (parts != null && parts.size >= 3) parts[2] else ""
+    
+    holder.tvEnglishDate.text = dateNumber
+    holder.tvLocalDate.text = day.localDate ?: ""
+    
+    // સમય (00:0) હવે આપોઆપ દૂર થઈ જશે કારણ કે આપણે માત્ર તારીખનો આંકડો જ લઈએ છીએ [cite: 2026-01-21]
 }
