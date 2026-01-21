@@ -1,4 +1,4 @@
-package com.indian.calendar
+package com.indian.calendar // 'p' નાનો રાખવો [cite: 2026-01-21]
 
 import android.os.Bundle
 import android.view.View
@@ -16,6 +16,7 @@ class CalendarViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view)
 
+        // XML માં આ ત્રણેય ID હોવા જોઈએ: calendarRecyclerView, progressBar, tvMonthYearLabel [cite: 2026-01-21]
         val recyclerView = findViewById<RecyclerView>(R.id.calendarRecyclerView)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val tvHeader = findViewById<TextView>(R.id.tvMonthYearLabel)
@@ -31,7 +32,7 @@ class CalendarViewActivity : AppCompatActivity() {
                 if (response.isSuccessful && !response.body().isNullOrEmpty()) {
                     val daysList = response.body()!!
                     
-                    // હેડરમાં મહિનો અને વર્ષ સેટ કરો [cite: 2026-01-21]
+                    // હેડરમાં મહિનો અને વર્ષ સેટ કરો (દા.ત. Jan 2026) [cite: 2026-01-21]
                     val firstDay = daysList[0].englishDate
                     val parts = firstDay?.split(" ")
                     if (parts != null && parts.size >= 4) {
