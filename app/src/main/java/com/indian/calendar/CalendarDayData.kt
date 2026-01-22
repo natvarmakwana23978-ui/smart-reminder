@@ -1,8 +1,9 @@
 package com.indian.calendar
-import com.google.gson.annotations.SerializedName
+
+import org.json.JSONObject
 
 data class CalendarDayData(
-    @SerializedName("ENGLISH") val englishDate: String? = null,
-    @SerializedName("local_date") val localDate: String? = null,
-    @SerializedName("Alert") val alert: String? = null
+    val englishDate: String,  // કોલમ A
+    val localDate: String?,   // કોલમ B (ગુજરાતી તિથિ)
+    val allData: JSONObject   // આખા રો નો ડેટા (બધી ૨૭ કોલમ્સ)
 )
