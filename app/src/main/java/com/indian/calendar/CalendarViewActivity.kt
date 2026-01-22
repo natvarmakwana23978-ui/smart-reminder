@@ -1,11 +1,10 @@
-package com.indian.calendar // 'p' નાનો રાખવો [cite: 2026-01-21]
+package com.indian.calendar
 
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
@@ -16,12 +15,11 @@ class CalendarViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view)
 
-        // XML માં આ ત્રણેય ID હોવા જોઈએ: calendarRecyclerView, progressBar, tvMonthYearLabel [cite: 2026-01-21]
         val recyclerView = findViewById<RecyclerView>(R.id.calendarRecyclerView)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        val tvHeader = findViewById<TextView>(R.id.tvMonthYearLabel)
-
-        recyclerView.layoutManager = GridLayoutManager(this, 7)
+        
+        // મહિનાઓ ઉપર-નીચે બતાવવા માટે LinearLayoutManager [cite: 2026-01-21]
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         val colIndex = intent.getIntExtra("COL_INDEX", 1)
         progressBar.visibility = View.VISIBLE
@@ -30,19 +28,14 @@ class CalendarViewActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<CalendarDayData>>, response: Response<List<CalendarDayData>>) {
                 progressBar.visibility = View.GONE
                 if (response.isSuccessful && !response.body().isNullOrEmpty()) {
-                    val daysList = response.body()!!
+                    // ડેટાને મહિના મુજબ ગ્રુપ કરવા માટે [cite: 2026-01-21]
+                    val allData = response.body()!!
+                    val groupedData = allData.groupBy { it.englishDate?.split(" ")?.get(1) ?: "" }
                     
-                    // હેડરમાં મહિનો અને વર્ષ સેટ કરો (દા.ત. Jan 2026) [cite: 2026-01-21]
-                    val firstDay = daysList[0].englishDate
-                    val parts = firstDay?.split(" ")
-                    if (parts != null && parts.size >= 4) {
-                        tvHeader.text = "${parts[1]} ${parts[3]}"
-                    }
-
-                    recyclerView.adapter = CalendarAdapter(daysList)
+                    // મેઈન એડપ્ટર જે મહિનાઓના લિસ્ટ બતાવશે [cite: 2026-01-21]
+                    recyclerView.adapter = MonthAdapter(groupedData)
                 }
             }
-
             override fun onFailure(call: Call<List<CalendarDayData>>, t: Throwable) {
                 progressBar.visibility = View.GONE
             }
