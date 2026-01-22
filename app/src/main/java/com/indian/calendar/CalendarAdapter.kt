@@ -1,6 +1,5 @@
 package com.indian.calendar
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,7 @@ class CalendarAdapter(private val days: List<CalendarDayData>) : RecyclerView.Ad
     override fun onBindViewHolder(h: ViewHolder, pos: Int) {
         val d = days[pos]
         
-        // ૧. જો ડેટા ખાલી હોય (Offset days), તો ખાનું છુપાવો [cite: 2026-01-21]
+        // જો ઓફસેટ (ખાલી) દિવસ હોય તો આખું કાર્ડ છુપાવો
         if (d.englishDate.isNullOrEmpty()) {
             h.itemView.visibility = View.INVISIBLE
             return
@@ -29,22 +28,25 @@ class CalendarAdapter(private val days: List<CalendarDayData>) : RecyclerView.Ad
         
         h.itemView.visibility = View.VISIBLE
         
-        // ૨. માત્ર તારીખનો આંકડો જ બતાવો [cite: 2026-01-21]
+        // ૧. અંગ્રેજી તારીખનો આંકડો (દા.ત. 01, 02)
         val parts = d.englishDate.split(" ")
         h.tvEng.text = if (parts.size >= 3) parts[2] else ""
+        
+        // ૨. ગુજરાતી તિથિ (દા.ત. સુદ-૧૩)
         h.tvLoc.text = d.localDate ?: ""
 
-        // ૩. ખોટા ડેટાને ફિલ્ટર કરવાનું લોજિક (Clean-up) [cite: 2026-01-21]
-        val invalidWords = listOf("Tevet", "Shevat", "Adar", "Rajab", "Shaban", "Ramadan")
+        // ૩. લાલ પટ્ટી ફિલ્ટર (માત્ર ભારતીય તહેવારો રાખવા માટે)
         val alertText = d.alert ?: ""
+        // જે શબ્દો આપણે નથી બતાવવા તેનું લિસ્ટ
+        val filterWords = listOf("Tevet", "Shevat", "Adar", "Nisan", "Iyar", "Sivan", "Rajab", "Shaban")
         
-        val isInvalid = invalidWords.any { alertText.contains(it, ignoreCase = true) }
+        val isInvalid = filterWords.any { alertText.contains(it, ignoreCase = true) }
 
-        // ૪. જો લાલ પટ્ટીમાં સાચો તહેવાર હોય તો જ બતાવો [cite: 2026-01-21]
         if (alertText.isNotEmpty() && !isInvalid) {
             h.tvAlert.visibility = View.VISIBLE
             h.tvAlert.text = alertText
         } else {
+            // જો ફિલ્ટર લિસ્ટમાં હોય અથવા ખાલી હોય તો પટ્ટી છુપાવો
             h.tvAlert.visibility = View.GONE
         }
     }
