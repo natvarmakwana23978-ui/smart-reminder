@@ -9,18 +9,19 @@ import com.indian.calendar.R
 
 class CalendarViewActivity : AppCompatActivity() {
 
-    private var recyclerView: RecyclerView? = null
+    // આ રીતે ડિક્લેર કરવાથી 'Unresolved reference' એરર જતી રહેશે
+    private var myRecyclerView: RecyclerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view)
 
-        // findViewById ને પ્રોપરલી કનેક્ટ કરો
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView?.layoutManager = LinearLayoutManager(this)
+        // XML માં ID @+id/recyclerView હોવું જોઈએ
+        myRecyclerView = findViewById(R.id.recyclerView)
+        myRecyclerView?.layoutManager = LinearLayoutManager(this)
     }
 
     fun setupCalendar(monthData: List<JsonObject>, selectedHeader: String) {
-        recyclerView?.adapter = MonthAdapter(monthData, selectedHeader)
+        myRecyclerView?.adapter = MonthAdapter(monthData, selectedHeader)
     }
 }
