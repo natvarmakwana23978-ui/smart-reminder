@@ -16,12 +16,12 @@ class CalendarAdapter(
 ) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        // ખાતરી કરો કે item_calendar_day.xml માં આ જ ID છે
         val tvEng: TextView = v.findViewById(R.id.tvEnglishDate)
         val tvLoc: TextView = v.findViewById(R.id.tvLocalDate)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // ખાતરી કરો કે item_calendar_day.xml માં tvEnglishDate અને tvLocalDate ID છે
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_day, parent, false)
         return ViewHolder(view)
     }
@@ -29,46 +29,30 @@ class CalendarAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val day = days[position]
         
-        // જો તારીખ ખાલી હોય તો ખાનું છુપાવો
-        if (day.englishDate.isEmpty()) {
-            holder.itemView.visibility = View.INVISIBLE
-            return
-        }
-        holder.itemView.visibility = View.VISIBLE
+        // ૧. તારીખ છૂટી પાડવી (1/1/2026 માંથી માત્ર '1' લેવા માટે)
+        val fullDate = day.englishDate // "1/1/2026"
+        val dateParts = fullDate.split("/")
+        val displayDate = if (dateParts.isNotEmpty()) dateParts[0] else ""
+        
+        holder.tvEng.text = displayDate
 
-        // ૧. અંગ્રેજી તારીખ બતાવો (દા.ત. 01, 02)
-        val dateParts = day.englishDate.split("/")
-        holder.tvEng.text = if (dateParts.isNotEmpty()) dateParts[0] else ""
-
-        // ૨. ગૂગલ શીટની પસંદ કરેલી કોલમનો ડેટા (તહેવાર/તિથિ)
+        // ૨. ગૂગલ શીટમાં જે હેડર સિલેક્ટ કર્યું હોય (દા.ત. ગુજરાતી (Gujarati)) તેનો ડેટા
         val calendarInfo = day.allData.get(selectedHeader)?.asString ?: ""
+        
+        // ટૂંકું લખાણ બતાવવું (દા.ત. પોષ સુદ-૧૩)
         holder.tvLoc.text = calendarInfo
-
-        // ૩. તમારા આઈડિયા મુજબ કલર કોડિંગ [cite: 2026-01-23]
-        // નોંધ: શીટમાં 'Category' નામની કોલમ હોવી જોઈએ
-        val category = day.allData.get("Category")?.asString ?: ""
+        
+        // ૩. તમારો કલર કોડ પ્લાન
+        // તમારી શીટમાં છેલ્લી કોલમમાં 'Sunday' કે 'Holiday' લખેલું હશે તો તે મુજબ રંગ બદલાશે
+        val rawData = day.allData.toString() // આખા ડેટામાં ક્યાંય શબ્દ છે કે નહીં તે ચેક કરવા
         
         when {
-            // રવિવાર અને બેંક રજા માટે લાલ [cite: 2026-01-23]
-            category.contains("Holiday", ignoreCase = true) || category.contains("Sunday", ignoreCase = true) -> {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FFEBEE")) // આછો લાલ
+            rawData.contains("Sunday", ignoreCase = true) || rawData.contains("Holiday", ignoreCase = true) -> {
+                holder.itemView.setBackgroundColor(Color.parseColor("#FFEBEE")) // લાલ
                 holder.tvEng.setTextColor(Color.RED)
             }
-            // હિન્દુ તહેવાર માટે કેસરી [cite: 2026-01-23]
-            category.contains("Hindu", ignoreCase = true) -> {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FFF3E0")) // આછો કેસરી
-            }
-            // મુસ્લિમ તહેવાર માટે લીલો [cite: 2026-01-23]
-            category.contains("Muslim", ignoreCase = true) -> {
-                holder.itemView.setBackgroundColor(Color.parseColor("#E8F5E9")) // આછો લીલો
-            }
-            // ઈસાઈ તહેવાર માટે વાદળી [cite: 2026-01-23]
-            category.contains("Christian", ignoreCase = true) -> {
-                holder.itemView.setBackgroundColor(Color.parseColor("#E3F2FD")) // આછો વાદળી
-            }
-            // કસ્ટમ રિમાઇન્ડર માટે ગુલાબી [cite: 2026-01-23]
-            category.contains("Personal", ignoreCase = true) || category.contains("Birthday", ignoreCase = true) -> {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FCE4EC")) // આછો ગુલાબી
+            rawData.contains("નૂતન વર્ષ", ignoreCase = true) -> {
+                holder.itemView.setBackgroundColor(Color.parseColor("#FFF3E0")) // કેસરી
             }
             else -> {
                 holder.itemView.setBackgroundColor(Color.WHITE)
@@ -76,7 +60,7 @@ class CalendarAdapter(
             }
         }
 
-        // ૪. તારીખ પર ટચ કરવાથી કાર્ડ (Bottom Sheet) ખોલો [cite: 2026-01-23]
+        // ૪. ક્લિક કરવાથી પોપઅપ કાર્ડ ખુલે
         holder.itemView.setOnClickListener {
             showDetailsCard(holder.itemView.context, day, calendarInfo)
         }
@@ -84,13 +68,11 @@ class CalendarAdapter(
 
     private fun showDetailsCard(context: android.content.Context, day: CalendarDayData, info: String) {
         val dialog = BottomSheetDialog(context)
-        // આપણે હમણાં બનાવેલું layout_day_details.xml લેઆઉટ [cite: 2026-01-23]
         val view = LayoutInflater.from(context).inflate(R.layout.layout_day_details, null)
         
         view.findViewById<TextView>(R.id.tvDetailTitle).text = "તારીખ: ${day.englishDate}"
         view.findViewById<TextView>(R.id.tvDetailInfo).text = info
         
-        // બંધ કરો બટન
         view.findViewById<Button>(R.id.btnClose).setOnClickListener {
             dialog.dismiss()
         }
