@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="match_parent" 
     android:layout_height="80dp"
     android:gravity="center"
     android:orientation="vertical"
     android:background="@android:color/white"
     android:layout_margin="1dp">
+    ```
 
-    <TextView
-        android:id="@+id/tvEnglishDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#000000" />
+---
 
-    <TextView
-        android:id="@+id/tvLocalDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:textColor="#666666" />
+### **હવે તમારે શું કરવાનું છે?**
 
-    <TextView
-        android:id="@+id/tvAlert"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FF0000"
-        android:textColor="#FFFFFF"
-        android:textSize="8sp"
-        android:gravity="center"
-        android:visibility="gone" />
-</LinearLayout>
+૧. ઉપર આપેલું **`CalendarAdapter.kt`** નું નવું લોજિક અપડેટ કરો.
+૨. **સૌથી મહત્વનું:** તમે હજુ સુધી મને **`MainActivity.kt`** અથવા તે ફાઈલનો કોડ નથી આપ્યો જ્યાંથી તમે `setupCalendar` ને કૉલ કરો છો. 
+
+**તમારી એપમાં અત્યારે તારીખ કેમ નથી દેખાતી?**
+કારણ કે તમે `setupCalendar` ફંક્શન તો બનાવી દીધું, પણ તેને **કૉલ (Run)** નથી કર્યું. જ્યાં સુધી તમે API માંથી ડેટા લઈને આ ફંક્શનને નહીં આપો, ત્યાં સુધી કેલેન્ડર કોરું જ રહેશે.
+
+
+
+**તમારે હવે `MainActivity.kt` નો કોડ પેસ્ટ કરવાનો છે.** હું ચેક કરી લઈશ કે તમે `setupCalendar` ને સાચી રીતે ડેટા મોકલો છો કે નહીં. તે થઈ જશે એટલે તમારી એપ ૧૦૦% રેડી થઈ જશે!
