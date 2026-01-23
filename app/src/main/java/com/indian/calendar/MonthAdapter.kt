@@ -6,32 +6,34 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.JsonObject
+import com.indian.calendar.R // આ લાઈન હોવી જ જોઈએ
 
 class MonthAdapter(
     private val monthData: List<JsonObject>,
     private val selectedHeader: String
 ) : RecyclerView.Adapter<MonthAdapter.ViewHolder>() {
 
+    // અહીં ID મેચ કરો (rvDays)
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val rvDays: RecyclerView = v.findViewById(R.id.rvDays)
+        val rvDays: RecyclerView? = v.findViewById(R.id.rvDays) 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        // ખાતરી કરો કે તમારી layout ફાઈલનું નામ item_month જ છે
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_month, parent, false)
         return ViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // આખા મહિનાનો ડેટા મેપ કરો
         val daysList = monthData.map { 
-            // અહીં માત્ર ૨ જ આર્ગ્યુમેન્ટ આપો: ENGLISH તારીખ અને આખો JsonObject
             CalendarDayData(it.get("ENGLISH")?.asString ?: "", it) 
         }
         
-        holder.rvDays.layoutManager = GridLayoutManager(holder.itemView.context, 7)
-        // CalendarAdapter ને સિલેક્ટેડ હેડર પણ પાસ કરો
-        holder.rvDays.adapter = CalendarAdapter(daysList, selectedHeader)
+        holder.rvDays?.apply {
+            layoutManager = GridLayoutManager(context, 7)
+            adapter = CalendarAdapter(daysList, selectedHeader)
+        }
     }
 
-    override fun getItemCount() = 1 // જરૂર મુજબ બદલી શકાય
+    override fun getItemCount() = 1
 }
