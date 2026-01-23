@@ -1,8 +1,6 @@
 package com.indian.calendar
 
 import android.os.Bundle
-import android.view.View
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,30 +12,38 @@ class CalendarViewActivity : AppCompatActivity() {
 
     private lateinit var calendarRecyclerView: RecyclerView
     private lateinit var tvMonthYearLabel: TextView
-    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view)
 
-        // XML ના IDs સાથે કનેક્શન [cite: 2026-01-23]
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView)
         tvMonthYearLabel = findViewById(R.id.tvMonthYearLabel)
-        progressBar = findViewById(R.id.progressBar)
 
-        // કેલેન્ડર ગ્રીડ માટે ૭ કોલમ સેટ કરો (રવિ થી શનિ) [cite: 2026-01-22]
+        // 7 કોલમ વાળું ગ્રીડ સેટ કરો
         calendarRecyclerView.layoutManager = GridLayoutManager(this, 7)
     }
 
-    fun setupCalendarData(responseBody: List<JsonObject>, selectedHeader: String, monthTitle: String) {
-        tvMonthYearLabel.text = monthTitle
+    fun setupCalendar(monthData: List<JsonObject>, selectedHeader: String, title: String) {
+        tvMonthYearLabel.text = title
         
-        val daysList = responseBody.map { 
-            CalendarDayData(it.get("ENGLISH")?.asString ?: "", it) 
+        val daysList = monthData.map { json ->
+            val date = json.get("ENGLISH")?.asString ?: ""
+            val dayData = CalendarDayData(date, json)
+            
+            // કલર કોડિંગ લોજિક
+            val category = json.get("Category")?.asString ?: ""
+            dayData.colorCode = when {
+                category.contains("Holiday") || category.contains("Sunday") -> 1 // Red
+                category.contains("Hindu") -> 2 // Orange
+                category.contains("Muslim") -> 3 // Green
+                category.contains("Christian") -> 4 // Blue
+                category.contains("Personal") -> 5 // Pink
+                else -> 0
+            }
+            dayData
         }
 
-        // એડેપ્ટર સેટ કરો
-        val adapter = CalendarAdapter(daysList, selectedHeader)
-        calendarRecyclerView.adapter = adapter
+        calendarRecyclerView.adapter = CalendarAdapter(daysList, selectedHeader)
     }
 }
