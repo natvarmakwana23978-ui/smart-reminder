@@ -14,48 +14,48 @@ import retrofit2.Response
 
 class CalendarSelectionActivity : AppCompatActivity() {
 
+    // આ લિસ્ટમાં આપણે ગૂગલ શીટનો ડેટા સાચવીશું
     private var allCalendarData: List<JsonObject> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_selection)
 
-        fetchData()
+        // હવે આપણે ડાયરેક્ટ ડેટા ખેંચવાને બદલે પહેલા કેલેન્ડરનું નામ નક્કી કરવું પડશે
+        // અથવા ડિફોલ્ટ રીતે "calendarfinaldata" લોડ કરવું પડશે
+        fetchData("calendarfinaldata") 
     }
 
-    private fun fetchData() {
-        // ૧. Retrofit માં 'instance' ને બદલે સાચી રીતે કૉલ કરો
-        val apiService = RetrofitClient.getClient().create(ApiService::class.java)
-        
-        apiService.getCalendarData().enqueue(object : Callback<List<JsonObject>> {
+    private fun fetchData(sheetName: String) {
+        // ૧. RetrofitClient.api નો સીધો ઉપયોગ કરો (મેં પહેલા આપેલા કોડ મુજબ)
+        RetrofitClient.api.getCalendarData(sheetName).enqueue(object : Callback<List<JsonObject>> {
             override fun onResponse(call: Call<List<JsonObject>>, response: Response<List<JsonObject>>) {
                 if (response.isSuccessful && response.body() != null) {
                     allCalendarData = response.body()!!
                     setupLanguageList()
                 } else {
-                    Toast.makeText(this@CalendarSelectionActivity, "ડેટા ખાલી છે", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@CalendarSelectionActivity, "ડેટા મળ્યો નથી", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<List<JsonObject>>, t: Throwable) {
-                Toast.makeText(this@CalendarSelectionActivity, "નેટવર્ક એરર", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CalendarSelectionActivity, "નેટવર્ક એરર: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     private fun setupLanguageList() {
-        // ૨. તમારી XML મુજબ સાચું ID: calendarSelectionRecyclerView [cite: 2026-01-25]
         val recyclerView = findViewById<RecyclerView>(R.id.calendarSelectionRecyclerView)
         
-        // ભાષાઓનું લિસ્ટ
-        val languages = listOf("ગુજરાતી (Gujarati)", "हिन्दी (Hindi)", "Islamic", "Punjabi", "Marathi")
+        // તમારી ગૂગલ શીટના હેડર મુજબ જ અહીં નામ લખવા
+        val languages = listOf("ગુજરાતી (Gujarati)", "हिन्दी (Hindi)", "إسلامي (Islamic)", "ENGLISH")
         
-        // ૩. એડેપ્ટર સેટઅપ
-        // જો અહીં 'Type mismatch' આવે, તો CalendarSelectionAdapter નો કોડ ચેક કરવો પડશે
         val adapter = CalendarSelectionAdapter(languages) { selectedLang ->
+            // ૨. ડેટાને String માં ફેરવો (Gson વાપરીને)
             val gson = Gson()
-            val jsonString: String = gson.toJson(allCalendarData)
+            val jsonString = gson.toJson(allCalendarData)
             
+            // ૩. Intent દ્વારા બીજી Activity માં મોકલો
             val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
             intent.putExtra("SELECTED_LANGUAGE", selectedLang)
             intent.putExtra("CALENDAR_DATA", jsonString)
