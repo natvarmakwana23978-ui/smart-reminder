@@ -8,9 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.indian.calendar.R
 
-// આ લાઈન હોવી ખૂબ જરૂરી છે [cite: 2026-01-23]
 class CalendarAdapter(
     private val days: List<CalendarDayData>,
     private val selectedHeader: String
@@ -29,7 +27,7 @@ class CalendarAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val day = days[position]
         
-        // ૧. તારીખ બતાવવાનું લોજિક
+        // ૧. તારીખ (ENGLISH કોલમ માંથી)
         val fullDate = day.englishDate
         val dateOnly = if (fullDate.contains("/")) {
             fullDate.substringBefore("/")
@@ -38,24 +36,18 @@ class CalendarAdapter(
         }
         holder.tvEng.text = dateOnly
 
-        // ૨. ગૂગલ શીટની વિગત
+        // ૨. ગૂગલ શીટની પસંદ કરેલી ભાષાની વિગત
         val calendarInfo = day.allData.get(selectedHeader)?.asString ?: ""
         holder.tvLoc.text = calendarInfo
         
-        // ૩. કલર કોડિંગ (તમારા આઈડિયા મુજબ) [cite: 2026-01-07]
+        // ૩. કલર કોડિંગ (રવિવાર અને તહેવારો માટે)
         val rawData = day.allData.toString()
-        when {
-            rawData.contains("Sunday", ignoreCase = true) || rawData.contains("Holiday", ignoreCase = true) -> {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FFEBEE"))
-                holder.tvEng.setTextColor(Color.RED)
-            }
-            rawData.contains("નૂતન વર્ષ", ignoreCase = true) -> {
-                holder.itemView.setBackgroundColor(Color.parseColor("#FFF3E0"))
-            }
-            else -> {
-                holder.itemView.setBackgroundColor(Color.WHITE)
-                holder.tvEng.setTextColor(Color.BLACK)
-            }
+        if (rawData.contains("Sunday", ignoreCase = true) || rawData.contains("Holiday", ignoreCase = true)) {
+            holder.itemView.setBackgroundColor(Color.parseColor("#FFEBEE"))
+            holder.tvEng.setTextColor(Color.RED)
+        } else {
+            holder.itemView.setBackgroundColor(Color.WHITE)
+            holder.tvEng.setTextColor(Color.BLACK)
         }
 
         holder.itemView.setOnClickListener {
