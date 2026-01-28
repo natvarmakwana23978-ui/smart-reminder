@@ -5,7 +5,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -25,15 +25,15 @@ class CalendarViewActivity : AppCompatActivity() {
         tvHeader = findViewById(R.id.tvMonthYearLabel)
         progressBar = findViewById(R.id.progressBar)
 
-        // તમારા પ્લાન મુજબ નીચેથી ઉપર સ્ક્રોલ કરવા માટે (Vertical Scrolling)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        // ગ્રીડ લેઆઉટ સેટ કરો: એક લાઈનમાં ૭ દિવસ (રવિવાર થી શનિવાર)
+        recyclerView.layoutManager = GridLayoutManager(this, 7)
 
+        // અગાઉની સ્ક્રીનમાંથી ડેટા મેળવો
         val jsonData = intent.getStringExtra("DATA")
         val selectedLang = intent.getStringExtra("SELECTED_LANG") ?: "ગુજરાતી (Gujarati)"
 
         if (!jsonData.isNullOrEmpty()) {
             try {
-                // ગૂગલ શીટનો ડેટા JSON માંથી લિસ્ટમાં રૂપાંતરિત કરો
                 val dataList: List<JsonObject> = Gson().fromJson(
                     jsonData, object : TypeToken<List<JsonObject>>() {}.type
                 )
@@ -41,26 +41,25 @@ class CalendarViewActivity : AppCompatActivity() {
                 val daysList = mutableListOf<CalendarDayData?>()
 
                 // પગલું ૫: ૧ જાન્યુઆરી ૨૦૨૬ એ ગુરુવાર છે.
-                // રવિવાર થી શરૂ થતા ગ્રીડમાં ગુરુવાર ૫માં સ્થાને આવે (Index 4)
-                // તેથી ૪ ખાલી (null) ખાના ઉમેરવા પડશે.
-                for (i in 1..4) {
+                // રવિવાર(0), સોમવાર(1), મંગળવાર(2), બુધવાર(3) -> ૪ ખાલી ખાના ઉમેરો
+                for (i in 0 until 4) {
                     daysList.add(null)
                 }
 
-                // શીટના ડેટાને એડેપ્ટરના ફોર્મેટ (CalendarDayData) માં ફેરવો
+                // ગૂગલ શીટનો ડેટા એડેપ્ટરના ફોર્મેટમાં ઉમેરો
                 dataList.forEach { json ->
                     val dateStr = json.get("ENGLISH")?.asString ?: ""
                     daysList.add(CalendarDayData(dateStr, json))
                 }
 
-                // હેડરમાં વર્ષ બતાવો
+                // હેડર સેટ કરો
                 tvHeader.text = "કેલેન્ડર ૨૦૨૬"
                 
-                // એડેપ્ટર સેટ કરો જે કલર કોડિંગ અને ઇસ્લામિક ડેટા હેન્ડલ કરશે
+                // એડેપ્ટર સેટ કરો (આમાં કલર કોડિંગ અને ડેટા દેખાશે)
                 recyclerView.adapter = CalendarAdapter(daysList, selectedLang)
 
             } catch (e: Exception) {
-                Toast.makeText(this, "ડેટા પ્રોસેસિંગમાં ભૂલ: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "ભૂલ: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(this, "ડેટા મળ્યો નથી", Toast.LENGTH_SHORT).show()
