@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 class CalendarAdapter(private val items: List<Any>, private val selectedLang: String) : 
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var lastMonth = ""
     private var saturdayCounter = 0
+    private var lastMonth = ""
 
     override fun getItemViewType(position: Int): Int = if (items[position] is String) 0 else 1
 
@@ -31,17 +31,11 @@ class CalendarAdapter(private val items: List<Any>, private val selectedLang: St
         if (holder is HeaderViewHolder) {
             val title = items[position] as String
             val tv = holder.itemView.findViewById<TextView>(android.R.id.text1)
-            
-            if (title == "EMPTY") {
-                tv.text = ""
-                tv.setBackgroundColor(Color.TRANSPARENT)
-            } else {
-                tv.text = title
-                tv.gravity = Gravity.CENTER
-                tv.setBackgroundColor(Color.parseColor("#EEEEEE"))
-                tv.setTextColor(Color.BLACK)
-                tv.setTypeface(null, Typeface.BOLD) // અહીં સુધારો કર્યો છે
-            }
+            tv.text = if (title == "EMPTY") "" else title
+            tv.gravity = Gravity.CENTER
+            tv.setBackgroundColor(Color.parseColor("#EEEEEE"))
+            tv.setTextColor(Color.BLACK)
+            tv.setTypeface(null, Typeface.BOLD)
         } else if (holder is DayViewHolder) {
             val item = items[position]
             if (item == "EMPTY") {
@@ -56,39 +50,38 @@ class CalendarAdapter(private val items: List<Any>, private val selectedLang: St
             val localInfo = day.allData.get(selectedLang)?.asString ?: ""
             holder.tvLocal.text = localInfo
 
-            // વાર નક્કી કરો (જાન્યુઆરી ૨૦૨૬ મુજબ ૦ એટલે રવિવાર, ૬ એટલે શનિવાર)
+            // ૧. શનિવાર અને રવિવાર નક્કી કરો
             val isSunday = position % 7 == 0
             val isSaturday = position % 7 == 6
             
-            // શનિવાર ગણવા માટેનું લોજિક
+            // ૨. મહિના મુજબ શનિવાર ગણવાનું લોજિક
             val currentMonth = day.englishDate.split("/")[1]
             if (currentMonth != lastMonth) {
                 lastMonth = currentMonth
                 saturdayCounter = 0
             }
-            
-            var isRedSaturday = false
-            if (isSaturday) {
-                saturdayCounter++
-                if (saturdayCounter == 2 || saturdayCounter == 4) {
-                    isRedSaturday = true
-                }
-            }
+            if (isSaturday) saturdayCounter++
+
+            // ૩. બીજો અને ચોથો શનિવાર ચેક કરો
+            val isSecondOrFourthSat = isSaturday && (saturdayCounter == 2 || saturdayCounter == 4)
+
+            // ૪. તહેવાર નક્કી કરવા માટેનું લોજિક (જો લખાણ ૧૨ અક્ષરથી લાંબુ હોય તો જ તહેવાર ગણવો)
+            val isFestival = localInfo.length > 12 && !localInfo.startsWith("પોષ સુદ") && !localInfo.startsWith("મહા સુદ")
 
             when {
-                // રવિવાર અથવા બીજો/ચોથો શનિવાર: લાલ બેકગ્રાઉન્ડ
-                isSunday || isRedSaturday -> {
+                // રવિવાર અથવા બીજો/ચોથો શનિવાર: લાલ રંગ
+                isSunday || isSecondOrFourthSat -> {
                     holder.itemView.setBackgroundColor(Color.RED)
                     holder.tvDate.setTextColor(Color.WHITE)
                     holder.tvLocal.setTextColor(Color.WHITE)
                 }
-                // તહેવાર (જો વિગત મોટી હોય): કેસરી બેકગ્રાઉન્ડ
-                localInfo.length > 15 || (localInfo.contains(" ") && !localInfo.contains("સુદ") && !localInfo.contains("વદ")) -> {
+                // તહેવાર હોય ત્યારે જ: કેસરી રંગ
+                isFestival -> {
                     holder.itemView.setBackgroundColor(Color.parseColor("#FF8C00"))
                     holder.tvDate.setTextColor(Color.WHITE)
                     holder.tvLocal.setTextColor(Color.WHITE)
                 }
-                // સામાન્ય દિવસ
+                // બાકીના સામાન્ય દિવસો: સફેદ બેકગ્રાઉન્ડ
                 else -> {
                     holder.itemView.setBackgroundColor(Color.WHITE)
                     holder.tvDate.setTextColor(Color.BLACK)
