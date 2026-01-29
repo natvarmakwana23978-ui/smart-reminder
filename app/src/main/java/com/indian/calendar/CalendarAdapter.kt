@@ -12,57 +12,59 @@ import androidx.recyclerview.widget.RecyclerView
 class CalendarAdapter(private val items: List<Any>, private val selectedLang: String) : 
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun getItemViewType(position: Int): Int = if (items[position] is String) 0 else 1
+    override fun getItemViewType(position: Int): Int {
+        val item = items[position]
+        return when {
+            item is String && !item.contains("Header_Day") && item != "EMPTY_SLOT" -> 0
+            item is String && item.contains("Header_Day") -> 1
+            else -> 2
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == 0) {
-            val v = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_1, parent, false)
-            HeaderViewHolder(v)
-        } else {
-            val v = LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_day, parent, false)
-            DayViewHolder(v)
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            0 -> HeaderViewHolder(inflater.inflate(android.R.layout.simple_list_item_1, parent, false))
+            1 -> WeekdayViewHolder(inflater.inflate(android.R.layout.simple_list_item_1, parent, false))
+            else -> DayViewHolder(inflater.inflate(R.layout.item_calendar_day, parent, false))
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = items[position]
         if (holder is HeaderViewHolder) {
-            val title = items[position] as String
             val tv = holder.itemView.findViewById<TextView>(android.R.id.text1)
-            if (title == "EMPTY_SLOT") {
-                tv.text = ""
-                tv.setBackgroundColor(Color.TRANSPARENT)
-            } else {
-                tv.text = title
-                tv.gravity = Gravity.CENTER
-                tv.setBackgroundColor(Color.parseColor("#F5F5F5"))
-                tv.setTextColor(Color.BLACK)
-                tv.setTypeface(null, Typeface.BOLD)
-                tv.setPadding(0, 20, 0, 20)
-            }
+            tv.text = item as String
+            tv.gravity = Gravity.CENTER
+            tv.setBackgroundColor(Color.LTGRAY)
+            tv.setTypeface(null, Typeface.BOLD)
+        } else if (holder is WeekdayViewHolder) {
+            val tv = holder.itemView.findViewById<TextView>(android.R.id.text1)
+            val day = (item as String).replace("Header_Day_", "")
+            tv.text = day
+            tv.gravity = Gravity.CENTER
+            tv.setTextColor(if (position % 7 == 0) Color.RED else Color.BLACK)
         } else if (holder is DayViewHolder) {
-            val item = items[position]
             if (item == "EMPTY_SLOT") {
                 holder.itemView.visibility = View.INVISIBLE
                 return
             }
             holder.itemView.visibility = View.VISIBLE
             val day = item as CalendarDayData
-            val dateNum = day.englishDate.split("/")[0]
-            holder.tvDate.text = dateNum
-            
-            val localInfo = day.allData.get(selectedLang)?.asString ?: ""
-            holder.tvLocal.text = localInfo
-
-            val dayName = day.allData.get("Day")?.asString ?: ""
             val festival = day.allData.get("Name of Festival")?.asString ?: ""
+            val dayInSheet = day.allData.get("Day")?.asString ?: ""
+            val dateNum = day.englishDate.split("/")[0]
 
-            val isSunday = dayName.contains("Sun")
-            val isSaturday = dayName.contains("Sat")
+            holder.tvDate.text = dateNum
+            holder.tvLocal.text = if (festival.isNotEmpty()) festival else (day.allData.get(selectedLang)?.asString ?: "")
+
+            val isSun = dayInSheet.contains("Sun")
+            val isSat = dayInSheet.contains("Sat")
             val d = dateNum.toInt()
-            val isRedSat = isSaturday && ((d in 8..14) || (d in 22..28))
+            val isRedSat = isSat && ((d in 8..14) || (d in 22..28))
 
             when {
-                isSunday || isRedSat -> {
+                isSun || isRedSat -> {
                     holder.itemView.setBackgroundColor(Color.RED)
                     holder.tvDate.setTextColor(Color.WHITE)
                     holder.tvLocal.setTextColor(Color.WHITE)
@@ -81,8 +83,9 @@ class CalendarAdapter(private val items: List<Any>, private val selectedLang: St
         }
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount() = items.size
     class HeaderViewHolder(v: View) : RecyclerView.ViewHolder(v)
+    class WeekdayViewHolder(v: View) : RecyclerView.ViewHolder(v)
     class DayViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val tvDate: TextView = v.findViewById(R.id.tvEnglishDate)
         val tvLocal: TextView = v.findViewById(R.id.tvLocalDate)
