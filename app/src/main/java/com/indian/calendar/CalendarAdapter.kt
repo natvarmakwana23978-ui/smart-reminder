@@ -28,10 +28,17 @@ class CalendarAdapter(private val items: List<Any>, private val selectedLang: St
         if (holder is HeaderViewHolder) {
             val title = items[position] as String
             val tv = holder.itemView.findViewById<TextView>(android.R.id.text1)
-            tv.text = if (title == "EMPTY_SLOT") "" else title
-            tv.gravity = Gravity.CENTER
-            tv.setBackgroundColor(if (title == "EMPTY_SLOT") Color.TRANSPARENT else Color.parseColor("#EEEEEE"))
-            tv.setTypeface(null, Typeface.BOLD)
+            if (title == "EMPTY_SLOT") {
+                tv.text = ""
+                tv.setBackgroundColor(Color.TRANSPARENT)
+            } else {
+                tv.text = title
+                tv.gravity = Gravity.CENTER
+                tv.setBackgroundColor(Color.parseColor("#F5F5F5"))
+                tv.setTextColor(Color.BLACK)
+                tv.setTypeface(null, Typeface.BOLD)
+                tv.setPadding(0, 20, 0, 20)
+            }
         } else if (holder is DayViewHolder) {
             val item = items[position]
             if (item == "EMPTY_SLOT") {
@@ -39,7 +46,6 @@ class CalendarAdapter(private val items: List<Any>, private val selectedLang: St
                 return
             }
             holder.itemView.visibility = View.VISIBLE
-            
             val day = item as CalendarDayData
             val dateNum = day.englishDate.split("/")[0]
             holder.tvDate.text = dateNum
@@ -47,25 +53,21 @@ class CalendarAdapter(private val items: List<Any>, private val selectedLang: St
             val localInfo = day.allData.get(selectedLang)?.asString ?: ""
             holder.tvLocal.text = localInfo
 
-            // પોઝિશન પરથી વાર નક્કી ન કરતા, ડેટા પરથી નક્કી કરો (વધારે સચોટ)
-            val isSunday = day.allData.get("ENGLISH").asString.contains("Sun")
-            val isSaturday = day.allData.get("ENGLISH").asString.contains("Sat")
-            
-            // શનિવાર ગણવા માટેનું લોજિક (તારીખ ૮-૧૪ અને ૨૨-૨૮ વચ્ચેના શનિવાર લાલ)
-            val d = dateNum.toInt()
-            val isSecondOrFourthSat = isSaturday && ((d in 8..14) || (d in 22..28))
+            val dayName = day.allData.get("Day")?.asString ?: ""
+            val festival = day.allData.get("Name of Festival")?.asString ?: ""
 
-            // તહેવાર લોજિક: જો લખાણમાં સુદ/વદ/વાર સિવાય વધારાના શબ્દો હોય
-            val cleanInfo = localInfo.replace("સુદ", "").replace("વદ", "").replace("વાર", "").trim()
-            val hasFestival = cleanInfo.length > 5 
+            val isSunday = dayName.contains("Sun")
+            val isSaturday = dayName.contains("Sat")
+            val d = dateNum.toInt()
+            val isRedSat = isSaturday && ((d in 8..14) || (d in 22..28))
 
             when {
-                isSunday || isSecondOrFourthSat -> {
+                isSunday || isRedSat -> {
                     holder.itemView.setBackgroundColor(Color.RED)
                     holder.tvDate.setTextColor(Color.WHITE)
                     holder.tvLocal.setTextColor(Color.WHITE)
                 }
-                hasFestival -> {
+                festival.isNotEmpty() -> {
                     holder.itemView.setBackgroundColor(Color.parseColor("#FF8C00"))
                     holder.tvDate.setTextColor(Color.WHITE)
                     holder.tvLocal.setTextColor(Color.WHITE)
