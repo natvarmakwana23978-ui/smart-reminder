@@ -1,7 +1,6 @@
 package com.indian.calendar
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,18 +14,14 @@ class CalendarViewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_calendar_view)
 
         val recyclerView = findViewById<RecyclerView>(R.id.calendarRecyclerView)
-        val tvMainHeader = findViewById<TextView>(R.id.tvMainHeader)
-
         val jsonData = intent.getStringExtra("DATA")
         val jsonWeekdays = intent.getStringExtra("WEEKDAYS_DATA")
         val selectedLang = intent.getStringExtra("SELECTED_LANG") ?: "ગુજરાતી (Gujarati)"
-        tvMainHeader.text = selectedLang
 
         val layoutManager = GridLayoutManager(this, 7)
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                val adapter = recyclerView.adapter as? CalendarAdapter
-                return if (adapter?.getItemViewType(position) == 0) 7 else 1
+            override fun getSpanSize(pos: Int): Int {
+                return if (recyclerView.adapter?.getItemViewType(pos) == 0) 7 else 1
             }
         }
         recyclerView.layoutManager = layoutManager
@@ -49,12 +44,12 @@ class CalendarViewActivity : AppCompatActivity() {
             dataList.forEach { json ->
                 val dateStr = json.get("ENGLISH")?.asString ?: ""
                 val parts = dateStr.split("/")
-                if (parts.size < 3) return@forEach
-                
                 val month = parts[1]
+
                 if (month != currentMonth) {
                     currentMonth = month
-                    finalItems.add("${getMonthName(month)} ${parts[2]}")
+                    // હેડર સેન્ટર માટે સ્પેશિયલ ફોર્મેટ
+                    finalItems.add("HEADER|$selectedLang\n${getMonthName(month)} - ${parts[2]}")
                     localWeekdays.forEach { finalItems.add("Header_Day_$it") }
 
                     val dayName = json.get("Day")?.asString ?: ""
