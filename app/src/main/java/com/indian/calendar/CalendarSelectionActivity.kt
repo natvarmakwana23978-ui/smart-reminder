@@ -2,10 +2,10 @@ package com.indian.calendar
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import retrofit2.Call
@@ -13,45 +13,45 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class CalendarSelectionActivity : AppCompatActivity() {
-    private var allData: List<JsonObject> = emptyList()
+    private lateinit var apiService: ApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_selection)
-        fetchData()
-    }
 
-    private fun fetchData() {
-        RetrofitClient.api.getCalendarData("calendarfinaldata").enqueue(object : Callback<List<JsonObject>> {
-            override fun onResponse(call: Call<List<JsonObject>>, response: Response<List<JsonObject>>) {
-                if (response.isSuccessful && response.body() != null) {
-                    allData = response.body()!!
-                    setupList()
-                }
-            }
-            override fun onFailure(call: Call<List<JsonObject>>, t: Throwable) {
-                Toast.makeText(this@CalendarSelectionActivity, "નેટવર્ક એરર", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
+        apiService = RetrofitClient.instance.create(ApiService::class.java)
+        val spinner = findViewById<Spinner>(R.id.languageSpinner)
+        val btnOpen = findViewById<Button>(R.id.btnOpenCalendar)
 
-    private fun setupList() {
-        val recyclerView = findViewById<RecyclerView>(R.id.calendarSelectionRecyclerView)
-        
-        // શીટના હેડર્સમાંથી ભાષાઓનું લિસ્ટ બનાવો (ENGLISH સિવાયની બધી)
-        val headers = allData[0].keySet().filter { it != "ENGLISH" }.toMutableList()
-        headers.add("➕ નવું કેલેન્ડર બનાવો (પગલું ૩-૪)")
+        val languages = listOf("ગુજરાતી (Gujarati)", "हिन्दी (Hindi)", "ENGLISH")
+        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, languages)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = CalendarSelectionAdapter(headers) { selected ->
-            if (selected.contains("નવું")) {
-                // અહીં નવું કેલેન્ડર બનાવવાનું ફોર્મ ખુલશે
-            } else {
-                val intent = Intent(this, CalendarViewActivity::class.java)
-                intent.putExtra("SELECTED_LANG", selected)
-                intent.putExtra("DATA", Gson().toJson(allData))
-                startActivity(intent)
-            }
+        btnOpen.setOnClickListener {
+            val selectedLang = spinner.selectedItem.toString()
+            fetchAllData(selectedLang)
         }
+    }
+
+    private fun fetchAllData(selectedLang: String) {
+        val call1 = apiService.getCalendarData("Sheet1")
+        val call2 = apiService.getCalendarData("Sheet2")
+
+        call1.enqueue(object : Callback<List<JsonObject>> {
+            override fun onResponse(call: Call<List<JsonObject>>, response1: Response<List<JsonObject>>) {
+                val data1 = Gson().toJson(response1.body())
+                call2.enqueue(object : Callback<List<JsonObject>> {
+                    override fun onResponse(call: Call<List<JsonObject>>, response2: Response<List<JsonObject>>) {
+                        val data2 = Gson().toJson(response2.body())
+                        val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
+                        intent.putExtra("DATA", data1)
+                        intent.putExtra("WEEKDAYS_DATA", data2)
+                        intent.putExtra("SELECTED_LANG", selectedLang)
+                        startActivity(intent)
+                    }
+                    override fun onFailure(call: Call<List<JsonObject>>, t: Throwable) {}
+                })
+            }
+            override fun onFailure(call: Call<List<JsonObject>>, t: Throwable) {}
+        })
     }
 }
