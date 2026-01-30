@@ -19,12 +19,15 @@ class CalendarSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_selection)
 
+        // RetrofitClient.instance હવે કામ કરશે
         apiService = RetrofitClient.instance.create(ApiService::class.java)
+
         val spinner = findViewById<Spinner>(R.id.languageSpinner)
         val btnOpen = findViewById<Button>(R.id.btnOpenCalendar)
 
         val languages = listOf("ગુજરાતી (Gujarati)", "हिन्दी (Hindi)", "ENGLISH")
-        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, languages)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, languages)
+        spinner.adapter = adapter
 
         btnOpen.setOnClickListener {
             val selectedLang = spinner.selectedItem.toString()
