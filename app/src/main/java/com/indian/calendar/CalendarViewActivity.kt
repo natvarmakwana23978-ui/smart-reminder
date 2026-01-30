@@ -1,6 +1,9 @@
 package com.indian.calendar
 
 import android.os.Bundle
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.view.Gravity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,61 +16,33 @@ class CalendarViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_view)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.calendarRecyclerView)
+        val rv = findViewById<RecyclerView>(R.id.calendarRecyclerView)
+        val sideBar = findViewById<LinearLayout>(R.id.sidebarWeekdays)
+        val tvTitle = findViewById<TextView>(R.id.tvCalendarTitle)
+        
+        tvTitle.text = intent.getStringExtra("CAL_TITLE") ?: "કેલેન્ડર"
         val jsonData = intent.getStringExtra("DATA")
-        val jsonWeekdays = intent.getStringExtra("WEEKDAYS_DATA")
-        val selectedLang = intent.getStringExtra("SELECTED_LANG") ?: "ગુજરાતી (Gujarati)"
+        val lang = intent.getStringExtra("SELECTED_LANG") ?: "ENGLISH"
 
-        val layoutManager = GridLayoutManager(this, 7)
-        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(pos: Int): Int {
-                return if (recyclerView.adapter?.getItemViewType(pos) == 0) 7 else 1
+        // ડાબી ઉભી પટ્ટી (Sidebar) માં વાર ઉમેરવા
+        val weekdays = listOf("રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ")
+        sideBar.removeAllViews()
+        weekdays.forEach { day ->
+            val tv = TextView(this).apply {
+                text = day
+                height = 200 // આશરે એક ખાનાની ઊંચાઈ
+                gravity = Gravity.CENTER
+                textSize = 12sp
             }
+            sideBar.addView(tv)
         }
-        recyclerView.layoutManager = layoutManager
 
-        if (!jsonData.isNullOrEmpty()) {
-            val gson = Gson()
-            val dataList: List<JsonObject> = gson.fromJson(jsonData, object : TypeToken<List<JsonObject>>() {}.type)
-            val weekdayList: List<JsonObject> = gson.fromJson(jsonWeekdays, object : TypeToken<List<JsonObject>>() {}.type)
-
-            val localWeekdays = if (weekdayList.isNotEmpty()) {
-                val row = weekdayList[0]
-                listOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday").map { 
-                    row.get(it)?.asString ?: it 
-                }
-            } else listOf("S", "M", "T", "W", "T", "F", "S")
-
-            val finalItems = mutableListOf<Any>()
-            var currentMonth = ""
-
-            dataList.forEach { json ->
-                val dateStr = json.get("ENGLISH")?.asString ?: ""
-                val parts = dateStr.split("/")
-                val month = parts[1]
-
-                if (month != currentMonth) {
-                    currentMonth = month
-                    // હેડર સેન્ટર માટે સ્પેશિયલ ફોર્મેટ
-                    finalItems.add("HEADER|$selectedLang\n${getMonthName(month)} - ${parts[2]}")
-                    localWeekdays.forEach { finalItems.add("Header_Day_$it") }
-
-                    val dayName = json.get("Day")?.asString ?: ""
-                    val emptyCount = when(dayName.trim()) {
-                        "Sun" -> 0 "Mon" -> 1 "Tue" -> 2 "Wed" -> 3 "Thu" -> 4 "Fri" -> 5 "Sat" -> 6 else -> 0
-                    }
-                    for (i in 0 until emptyCount) finalItems.add("EMPTY_SLOT")
-                }
-                finalItems.add(CalendarDayData(dateStr, json))
-            }
-            recyclerView.adapter = CalendarAdapter(finalItems, selectedLang)
-        }
-    }
-
-    private fun getMonthName(m: String) = when(m) {
-        "01" -> "જાન્યુઆરી" "02" -> "ફેબ્રુઆરી" "03" -> "માર્ચ" "04" -> "એપ્રિલ"
-        "05" -> "મે" "06" -> "જૂન" "07" -> "જુલાઈ" "08" -> "ઓગસ્ટ"
-        "09" -> "સપ્ટેમ્બર" "10" -> "ઓક્ટોબર" "11" -> "નવેમ્બર" "12" -> "ડિસેમ્બર"
-        else -> m
+        rv.layoutManager = GridLayoutManager(this, 7)
+        val dataList: List<JsonObject> = Gson().fromJson(jsonData, object : TypeToken<List<JsonObject>>() {}.type)
+        
+        val finalItems = mutableListOf<CalendarDayData>()
+        dataList.forEach { finalItems.add(CalendarDayData(it.get("ENGLISH")?.asString ?: "", it)) }
+        
+        rv.adapter = CalendarAdapter(finalItems, lang)
     }
 }
