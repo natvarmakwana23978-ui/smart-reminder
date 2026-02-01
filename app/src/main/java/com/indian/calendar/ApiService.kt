@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface ApiService {
     @GET("exec")
     fun getCalendarData(
-        @Query("calendar") sheetName: String, // "Sheet1" અથવા "Sheet2"
-        @Query("action") action: String       // "getDays" લોજિક માટે
-    ): Call<List<JsonObject>>
+        @Query("sheetName") sheetName: String,
+        @Query("action") action: String
+    ): Call<JsonObject> // અહીં List કાઢીને JsonObject કર્યું છે
 }
