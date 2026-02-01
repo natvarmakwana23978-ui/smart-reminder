@@ -10,5 +10,5 @@ interface ApiService {
     fun getCalendarData(
         @Query("sheetName") sheetName: String,
         @Query("action") action: String
-    ): Call<JsonObject> // અહીં List કાઢીને JsonObject કર્યું છે
+    ): Call<JsonObject>
 }
