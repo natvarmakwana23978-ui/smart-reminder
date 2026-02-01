@@ -20,20 +20,20 @@ class MainActivity : AppCompatActivity() {
         val spinnerLanguage = findViewById<Spinner>(R.id.languageSpinner)
         val btnNext = findViewById<Button>(R.id.btnOpenCalendar)
 
-        // ૧. કેલેન્ડર લિસ્ટ
-        val calendars = arrayOf("વિક્રમ સંવત (ગુજરાતી)", "Hijri (Islamic)", "Gregorian (English)", "Saka Samvat", "+ નવું બનાવો")
+        // ૧. વૈશ્વિક કેલેન્ડર લિસ્ટ - જે તમે કીધું તે મુજબ
+        val calendars = arrayOf("વિક્રમ સંવત (ગુજરાતી)", "Hijri (Islamic)", "Chinese Calendar", "Saka Samvat", "Gregorian (English)", "+ નવું બનાવો")
         val calAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, calendars)
         spinnerCalendar.adapter = calAdapter
 
-        // ૨. ઓટોમેટિક ભાષા બદલવાનું લોજિક
+        // ૨. કેલેન્ડર મુજબ ભાષાઓનું સેટિંગ
         spinnerCalendar.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 val selectedCal = calendars[position]
                 val languages = when (selectedCal) {
                     "વિક્રમ સંવત (ગુજરાતી)" -> arrayOf("ગુજરાતી", "हिन्दी", "English")
-                    "Hijri (Islamic)" -> arrayOf("العربية", "اردو", "हिन्दी", "English")
-                    "Gregorian (English)" -> arrayOf("English", "Español", "Français")
-                    else -> arrayOf("English")
+                    "Hijri (Islamic)" -> arrayOf("العربية", "اردو", "ગુજરાતી", "हिन्दी", "English")
+                    "Chinese Calendar" -> arrayOf("Mandarin (中文)", "English")
+                    else -> arrayOf("English", "ગુજરાતી", "हिन्दी")
                 }
                 val langAdapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_dropdown_item, languages)
                 spinnerLanguage.adapter = langAdapter
@@ -41,15 +41,15 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        // ૩. બટન દબાવતા ડેટા લાવવો
+        // ૩. ડેટા લાવવા માટેનું બટન
         btnNext.setOnClickListener {
             btnNext.isEnabled = false
-            btnNext.text = "માહિતી આવી રહી છે..."
+            btnNext.text = "ડેટા લોડ થઈ રહ્યો છે..."
 
             val apiService = RetrofitClient.instance.create(ApiService::class.java)
             
-            // અહીં મેં બાય-ડિફોલ્ટ સેટિંગ્સ કરી દીધા છે
-            apiService.getCalendarData("Sheet1", "readAll").enqueue(object : Callback<JsonObject> {
+            // તમારી શીટ મુજબ અહીં "Sheet2" કરી દીધું છે
+            apiService.getCalendarData("Sheet2", "readAll").enqueue(object : Callback<JsonObject> {
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     if (response.isSuccessful && response.body() != null) {
                         val intent = Intent(this@MainActivity, CalendarViewActivity::class.java)
@@ -58,14 +58,14 @@ class MainActivity : AppCompatActivity() {
                         intent.putExtra("SELECTED_LANG", spinnerLanguage.selectedItem.toString())
                         startActivity(intent)
                     } else {
-                        Toast.makeText(this@MainActivity, "શીટ સાથે કનેક્શન નથી થઈ રહ્યું", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@MainActivity, "કનેક્શન નિષ્ફળ! શીટનું નામ ચેક કરો.", Toast.LENGTH_LONG).show()
                     }
                     btnNext.isEnabled = true
                     btnNext.text = "આગળ વધો"
                 }
 
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                    Toast.makeText(this@MainActivity, "ઇન્ટરનેટ ચેક કરો માલિક!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MainActivity, "નેટવર્ક એરર: ${t.message}", Toast.LENGTH_LONG).show()
                     btnNext.isEnabled = true
                     btnNext.text = "આગળ વધો"
                 }
