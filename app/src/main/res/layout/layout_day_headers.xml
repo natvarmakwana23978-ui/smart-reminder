@@ -1,1 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#EEEEEE"
+    android:padding="8dp">
+
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="રવિ" android:textColor="#FF0000" android:gravity="center" android:textStyle="bold"/>
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="સોમ" android:textColor="#000000" android:gravity="center" android:textStyle="bold"/>
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="મંગળ" android:textColor="#000000" android:gravity="center" android:textStyle="bold"/>
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="બુધ" android:textColor="#000000" android:gravity="center" android:textStyle="bold"/>
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="ગુરુ" android:textColor="#000000" android:gravity="center" android:textStyle="bold"/>
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="શુક્ર" android:textColor="#000000" android:gravity="center" android:textStyle="bold"/>
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="શનિ" android:textColor="#000000" android:gravity="center" android:textStyle="bold"/>
+</LinearLayout>
 
