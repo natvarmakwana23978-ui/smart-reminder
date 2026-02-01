@@ -2,6 +2,8 @@ package com.indian.calendar
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
@@ -16,22 +18,28 @@ class CalendarSelectionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar_selection)
 
-        // ધારો કે યુઝરે ગુજરાત કેલેન્ડર બટન પર ક્લિક કર્યું
-        // આપણે ડેટા લોડ કરવાનું ફંક્શન કોલ કરીશું
-        loadCalendarAndDays("Sheet1", "ગુજરાતી (Gujarati)")
+        // ૧. XML માંથી બટન અને સ્પિનર શોધો (ID તમારા XML મુજબ ચેક કરી લેવા)
+        val btnNext = findViewById<Button>(R.id.btnNext) // 'આગળ વધો' બટન
+        val spinnerLang = findViewById<Spinner>(R.id.spinnerLanguage) 
+        val spinnerCal = findViewById<Spinner>(R.id.spinnerCalendar)
+
+        // ૨. બટન પર ક્લિક થાય ત્યારે જ ડેટા લોડ થવો જોઈએ
+        btnNext.setOnClickListener {
+            val selectedLanguage = spinnerLang.selectedItem.toString()
+            val selectedSheet = "Sheet1" // અથવા સ્પિનર મુજબ નક્કી કરો
+
+            Toast.makeText(this, "લોડ થઈ રહ્યું છે...", Toast.LENGTH_SHORT).show()
+            loadCalendarAndDays(selectedSheet, selectedLanguage)
+        }
     }
 
     private fun loadCalendarAndDays(sheetName: String, selectedLang: String) {
-        // અહીં આપણે તમારા 'RetrofitClient' નો ઉપયોગ કર્યો છે
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
 
-        // એરર સોલ્વ કરવા માટે અહીં "getData" પેરામીટર ઉમેર્યો છે
         apiService.getCalendarData(sheetName, "getData").enqueue(object : Callback<List<JsonObject>> {
             override fun onResponse(call: Call<List<JsonObject>>, response: Response<List<JsonObject>>) {
                 if (response.isSuccessful && response.body() != null) {
                     val calendarData = Gson().toJson(response.body())
-                    
-                    // ડેટા મળી જાય એટલે વારના નામ (Sheet2) લેવા જઈશું
                     fetchDayNames(apiService, calendarData, selectedLang)
                 } else {
                     Toast.makeText(this@CalendarSelectionActivity, "ડેટા ના મળ્યો!", Toast.LENGTH_SHORT).show()
@@ -45,10 +53,8 @@ class CalendarSelectionActivity : AppCompatActivity() {
     }
 
     private fun fetchDayNames(apiService: ApiService, calendarData: String, selectedLang: String) {
-        // Sheet2 માંથી વારના નામ લાવવા "getDays" એક્શન મોકલીશું
         apiService.getCalendarData("Sheet2", "getDays").enqueue(object : Callback<List<JsonObject>> {
             override fun onResponse(call: Call<List<JsonObject>>, response: Response<List<JsonObject>>) {
-                // અહીં આપણે અત્યારે મેન્યુઅલ લિસ્ટ મોકલીએ છીએ, જે તમે પછી શીટ મુજબ બદલી શકો
                 val dayNames = listOf("રવિ", "સોમ", "મંગળ", "બુધ", "ગુરુ", "શુક્ર", "શનિ")
                 val dayNamesJson = Gson().toJson(dayNames)
 
@@ -60,7 +66,6 @@ class CalendarSelectionActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<JsonObject>>, t: Throwable) {
-                // જો વાર ના મળે તો પણ કેલેન્ડર તો ખોલીશું જ
                 val intent = Intent(this@CalendarSelectionActivity, CalendarViewActivity::class.java)
                 intent.putExtra("DATA", calendarData)
                 intent.putExtra("SELECTED_LANG", selectedLang)
