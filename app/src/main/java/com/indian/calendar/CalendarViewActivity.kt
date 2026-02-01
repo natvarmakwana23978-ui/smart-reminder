@@ -17,19 +17,21 @@ class CalendarViewActivity : AppCompatActivity() {
         val tvMonthYear = findViewById<TextView>(R.id.tvMonthYear)
 
         val jsonData = intent.getStringExtra("DATA") ?: "[]"
-        val lang = intent.getStringExtra("SELECTED_LANG") ?: "ગુજરાતી (Gujarati)"
+        val selectedLang = intent.getStringExtra("SELECTED_LANG") ?: "ગુજરાતી (Gujarati)"
         
         val allData: List<JsonObject> = Gson().fromJson(jsonData, object : TypeToken<List<JsonObject>>() {}.type)
 
-        val adapter = CalendarPagerAdapter(this, allData, lang)
-        viewPager.adapter = adapter
-        viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+        if (allData.isNotEmpty()) {
+            val adapter = CalendarPagerAdapter(this, allData, selectedLang)
+            viewPager.adapter = adapter
+            viewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
 
-        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                val months = listOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
-                tvMonthYear.text = "${months[position]} - 2026"
-            }
-        })
+            viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    val months = listOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+                    tvMonthYear.text = "${months[position]} - 2026"
+                }
+            })
+        }
     }
 }
