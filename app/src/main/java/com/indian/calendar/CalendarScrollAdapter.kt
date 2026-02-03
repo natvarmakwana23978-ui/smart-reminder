@@ -14,7 +14,6 @@ class CalendarScrollAdapter(
     private val selectedLang: String
 ) : RecyclerView.Adapter<CalendarScrollAdapter.MonthViewHolder>() {
 
-    // ૧૨ મહિનાના નામ (અંગ્રેજીમાં ટાઈટલ માટે)
     private val months = arrayOf(
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -26,7 +25,7 @@ class CalendarScrollAdapter(
     }
 
     override fun onBindViewHolder(holder: MonthViewHolder, position: Int) {
-        holder.bind(position, months[position], jsonData, selectedLang)
+        holder.bind(position, months[position], jsonData)
     }
 
     override fun getItemCount(): Int = 12
@@ -35,43 +34,49 @@ class CalendarScrollAdapter(
         private val txtEngMonth: TextView = view.findViewById(R.id.txtEngMonth)
         private val daysRecyclerView: RecyclerView = view.findViewById(R.id.daysRecyclerView)
 
-        fun bind(monthPos: Int, monthName: String, jsonData: String, lang: String) {
+        fun bind(monthPos: Int, monthName: String, jsonData: String) {
             txtEngMonth.text = "$monthName 2026"
 
             val dayList = mutableListOf<DayModel>()
 
             try {
-                val fullData = JSONArray(jsonData)
-                
-                // શીટના ડેટામાંથી આ મહિનાની તારીખો ફિલ્ટર કરવી
-                for (i in 0 until fullData.length()) {
-                    val obj = fullData.getJSONObject(i)
+                if (jsonData.isNotEmpty()) {
+                    val fullData = JSONArray(jsonData)
                     
-                    // જો તમારી સ્ક્રિપ્ટ 'month' મોકલતી હોય તો આ ફિલ્ટર કામ કરશે
-                    // અત્યારે આપણે સીધો ડેટા મેપ કરીએ છીએ
-                    val date = obj.optString("date", "")
-                    val tithi = obj.optString("tithi", "")
+                    for (i in 0 until fullData.length()) {
+                        val obj = fullData.getJSONObject(i)
+                        // તમારી લિંક મુજબ ડેટા "data" કી માં છે
+                        val rawLine = obj.optString("data", "")
 
-                    if (date.isNotEmpty()) {
-                        dayList.add(DayModel(date, tithi))
+                        if (rawLine.contains("|")) {
+                            val parts = rawLine.split("|").map { it.trim() }
+                            
+                            // ઇન્ડેક્સ ચેક: તમારી લાઈનમાં 1 નંબરે તારીખ અને 6 નંબરે તિથિ છે
+                            if (parts.size > 6) {
+                                val dateStr = parts[1] // તારીખ (દા.ત. 1)
+                                val tithiStr = parts[6] // તિથિ (દા.ત. એકમ)
+                                
+                                if (dateStr.isNotEmpty()) {
+                                    dayList.add(DayModel(dateStr, tithiStr))
+                                }
+                            }
+                        }
                     }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
-            // જો શીટનો ડેટા ન મળે તો ખાલી ખાના ન દેખાય એટલે ૧ થી ૩૦ તારીખ બતાવી દેશે
+            // જો કોઈ કારણસર ડેટા ન મળે તો ખાલી ૧ થી ૩૦ તારીખ બતાવશે (ક્રેશ નહીં થાય)
             if (dayList.isEmpty()) {
                 for (i in 1..30) {
-                    dayList.add(DayModel(i.toString(), "તિથિ $i"))
+                    dayList.add(DayModel(i.toString(), ""))
                 }
             }
 
-            // મહિનાની તારીખોની ગ્રીડ (૭ કોલમ: રવિ થી શનિ)
+            // ગ્રીડ સેટઅપ
             daysRecyclerView.layoutManager = GridLayoutManager(itemView.context, 7)
             daysRecyclerView.adapter = DaysAdapter(dayList)
-            
-            // સ્મૂધ સ્ક્રોલિંગ માટે આ જરૂરી છે
             daysRecyclerView.isNestedScrollingEnabled = false
         }
     }
