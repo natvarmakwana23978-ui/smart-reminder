@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="wrap_content"
+    android:minHeight="75dp"
     android:orientation="vertical"
     android:gravity="center"
     android:background="@android:color/white"
-    android:padding="2dp"
-    android:layout_margin="0.1dp">
+    android:padding="4dp"
+    android:layout_margin="0.5dp">
 
     <TextView
         android:id="@+id/tvEnglishDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="#000000" />
 
@@ -20,7 +21,7 @@
         android:id="@+id/tvTithi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
+        android:textSize="11sp"
         android:gravity="center"
         android:textColor="#555555"
         android:maxLines="2"
