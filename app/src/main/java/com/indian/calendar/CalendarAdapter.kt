@@ -6,15 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.JsonObject
 
 class CalendarAdapter(
-    private val items: List<JsonObject>, // શીટના દરેક રો (Row) નો ડેટા
-    private val selectedLang: String    // યુઝરે પસંદ કરેલી ભાષા
+    private val items: List<CalendarDayData>,
+    private val selectedLang: String
 ) : RecyclerView.Adapter<CalendarAdapter.DayViewHolder>() {
 
     class DayViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val tvEnglishDate: TextView = v.findViewById(R.id.tvEnglishDate)
+        val tvDate: TextView = v.findViewById(R.id.tvEnglishDate) // XML માં ID ચેક કરી લેવી
         val tvTithi: TextView = v.findViewById(R.id.tvTithi)
     }
 
@@ -24,25 +23,22 @@ class CalendarAdapter(
     }
 
     override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
-        val dayData = items[position]
-
-        // તમારી શીટની કોલમ મુજબના નામ (દા.ત. "date", "color_code")
-        val engDate = dayData.get("date")?.asString ?: ""
-        val colorCode = dayData.get("color_code")?.asInt ?: 0
+        val day = items[position]
+        holder.tvDate.text = day.date
         
-        holder.tvEnglishDate.text = engDate
+        // ભાષા મુજબ વિગત બતાવો
+        val info = if (day.details?.has(selectedLang) == true) {
+            day.details.get(selectedLang).asString
+        } else { "" }
+        holder.tvTithi.text = info
 
-        // ભાષા મુજબ તિથિ સેટ કરો
-        val tithiInfo = dayData.get(selectedLang)?.asString ?: ""
-        holder.tvTithi.text = tithiInfo
-
-        // રજા માટે લાલ રંગ (color_code == 1)
-        if (colorCode == 1) {
-            holder.tvEnglishDate.setTextColor(Color.RED)
+        // રજા હોય તો લાલ રંગ
+        if (day.color_code == 1 || day.isSunday) {
+            holder.tvDate.setTextColor(Color.RED)
             holder.tvTithi.setTextColor(Color.RED)
         } else {
-            holder.tvEnglishDate.setTextColor(Color.BLACK)
-            holder.tvTithi.setTextColor(Color.DKGRAY)
+            holder.tvDate.setTextColor(Color.BLACK)
+            holder.tvTithi.setTextColor(Color.GRAY)
         }
     }
 
