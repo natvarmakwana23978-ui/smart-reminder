@@ -24,12 +24,11 @@ class MonthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        // જો અહીં લાલ લાઈન આવે, તો સમજવું કે XML માં ID અલગ છે
         binding.recyclerViewMonth.layoutManager = GridLayoutManager(context, 7)
-        // એડેપ્ટર સેટ કરો
         binding.recyclerViewMonth.adapter = MonthAdapter(monthData, language)
     }
 
-    // આ ફંક્શન દ્વારા Activity માંથી ડેટા મોકલવામાં આવશે
     fun setData(data: List<CalendarDayData>, lang: String) {
         this.monthData = data
         this.language = lang
