@@ -1,6 +1,5 @@
 package com.indian.calendar
 
-import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -8,7 +7,7 @@ import retrofit2.http.Query
 interface ApiService {
     @GET("exec")
     fun getCalendarData(
-        @Query("calendar") sheetName: String, // 'sheetName' ને બદલે 'calendar' કરો
+        @Query("calendar") sheetName: String,
         @Query("action") action: String
-    ): Call<JsonObject>
+    ): Call<List<CalendarDayData>> // અહીં List વાપરવાથી પેલી Type Mismatch એરર જતી રહેશે
 }
