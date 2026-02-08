@@ -1,29 +1,63 @@
-package com.indian.calendar
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F9FA">
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.indian.calendar.databinding.ActivityCalendarSelectionBinding 
+    <TextView
+        android:id="@+id/tvMainTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="સ્માર્ટ કેલેન્ડર સિલેક્શન"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="20dp"
+        android:background="#D32F2F"
+        android:textColor="#FFFFFF"/>
 
-class LanguageSelectionActivity : AppCompatActivity() {
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="25dp">
 
-    private lateinit var binding: ActivityCalendarSelectionBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        
-        // તમારી XML મુજબ બાઈન્ડિંગ ઇન્ફ્લેટ કરો
-        binding = ActivityCalendarSelectionBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        // અહીં આપણે 'btnNext' ને બદલે 'btnOpenCalendar' વાપર્યું છે
-        binding.btnOpenCalendar.setOnClickListener {
-            val selectedLang = binding.languageSpinner.selectedItem.toString()
+        <TextView 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:text="તમારું કેલેન્ડર પસંદ કરો (૨૭ ઉપલબ્ધ):"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp"/>
             
-            // કેલેન્ડર સિલેક્શન એક્ટિવિટી પર જાઓ
-            val intent = Intent(this, CalendarSelectionActivity::class.java)
-            intent.putExtra("SELECTED_LANG", selectedLang)
-            startActivity(intent)
-        }
-    }
-}
+        <Spinner
+            android:id="@+id/calendarSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="20dp" />
+
+        <TextView 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:text="તમારી ભાષા પસંદ કરો:"
+            android:textColor="#333333"
+            android:layout_marginBottom="8dp"/>
+            
+        <Spinner
+            android:id="@+id/languageSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="30dp" />
+
+        <Button
+            android:id="@+id/btnOpenCalendar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="આગળ વધો"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:backgroundTint="#D32F2F"
+            android:textColor="#FFFFFF" />
+            
+    </LinearLayout>
+</LinearLayout>
