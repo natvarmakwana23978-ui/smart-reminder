@@ -8,24 +8,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.JsonObject
 
-// ડેટા ક્લાસ - જે શીટ માંથી ડેટા લેશે
-data class CalendarDayData(
-    val englishDate: String,
-    val colorCode: Int, // ૧ એટલે રજા
-    val allData: JsonObject, // તમારી ૨૭ કેલેન્ડરની વિગતો
-    val isSecondOrFourthSaturday: Boolean = false,
-    val isSunday: Boolean = false
-)
-
 class CalendarAdapter(
-    private val items: List<CalendarDayData>, 
-    private val selectedLang: String
+    private val items: List<JsonObject>, // શીટના દરેક રો (Row) નો ડેટા
+    private val selectedLang: String    // યુઝરે પસંદ કરેલી ભાષા
 ) : RecyclerView.Adapter<CalendarAdapter.DayViewHolder>() {
-    
+
     class DayViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val tvEnglishDate: TextView = v.findViewById(R.id.tvEnglishDate)
         val tvTithi: TextView = v.findViewById(R.id.tvTithi)
-        val container: View = v // આખું ખાનું
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DayViewHolder {
@@ -34,31 +24,25 @@ class CalendarAdapter(
     }
 
     override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
-        val day = items[position]
-        
-        holder.tvEnglishDate.text = day.englishDate
-        
-        if (day.englishDate.isEmpty()) {
-            holder.tvTithi.text = ""
-            return
-        }
+        val dayData = items[position]
 
-        // તમારી પસંદ કરેલી ભાષા મુજબ તિથિ/માહિતી સેટ કરો
-        val localInfo = if (day.allData.has(selectedLang)) {
-            day.allData.get(selectedLang).asString
-        } else {
-            ""
-        }
-        holder.tvTithi.text = localInfo
+        // તમારી શીટની કોલમ મુજબના નામ (દા.ત. "date", "color_code")
+        val engDate = dayData.get("date")?.asString ?: ""
+        val colorCode = dayData.get("color_code")?.asInt ?: 0
+        
+        holder.tvEnglishDate.text = engDate
 
-        // --- રંગ સેટ કરવાનું લોજિક ---
-        // જો colorCode ૧ હોય (રજા) અથવા રવિવાર હોય અથવા ૨જો/૪થો શનિવાર હોય તો લાલ
-        if (day.colorCode == 1 || day.isSunday || day.isSecondOrFourthSaturday) {
+        // ભાષા મુજબ તિથિ સેટ કરો
+        val tithiInfo = dayData.get(selectedLang)?.asString ?: ""
+        holder.tvTithi.text = tithiInfo
+
+        // રજા માટે લાલ રંગ (color_code == 1)
+        if (colorCode == 1) {
             holder.tvEnglishDate.setTextColor(Color.RED)
             holder.tvTithi.setTextColor(Color.RED)
         } else {
             holder.tvEnglishDate.setTextColor(Color.BLACK)
-            holder.tvTithi.setTextColor(Color.parseColor("#555555")) // ડાર્ક ગ્રે
+            holder.tvTithi.setTextColor(Color.DKGRAY)
         }
     }
 
