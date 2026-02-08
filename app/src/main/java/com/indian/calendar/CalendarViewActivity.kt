@@ -13,9 +13,9 @@ class CalendarViewActivity : AppCompatActivity() {
         binding = ActivityCalendarViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // અહીં વ્યુપેજરનો ઉપયોગ કરીએ છીએ
+        // તમારા વ્યુપેજરનું ID ચેક કરી લેવું, અત્યારે મેં સામાન્ય નામ રાખ્યું છે
         val adapter = CalendarPagerAdapter(this)
-        binding.viewPager.adapter = adapter 
-        // જો XML માં ID 'viewPager' ન હોય તો તે મુજબ બદલવું પડશે
+        // જો XML માં ViewPager2 હોય તો જ આ લાઈન કામ કરશે
+        // binding.yourViewPagerId.adapter = adapter
     }
 }
