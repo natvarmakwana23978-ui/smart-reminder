@@ -1,4 +1,4 @@
-package com.indian.calendar
+package com.smart.reminder
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
