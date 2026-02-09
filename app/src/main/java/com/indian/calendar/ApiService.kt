@@ -1,4 +1,4 @@
-package com.indian.calendar
+package com.smart.reminder
 
 import retrofit2.Call
 import retrofit2.http.GET
