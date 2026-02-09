@@ -1,14 +1,17 @@
 plugins {
-    id("com.smart.reminder")
+    // આ પ્લગઈન્સ ફિક્સ હોય છે, આમાં એપનું નામ ન આવે
+    id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
 android {
-    namespace = "com.indian.calendar"
+    // આ તમારી એપનું નવું સરનામું (Package Name)
+    namespace = "com.smart.reminder"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.indian.calendar"
+        // આ તમારી એપની યુનિક આઈડી છે
+        applicationId = "com.smart.reminder"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -24,7 +27,7 @@ android {
         }
     }
 
-    // આ ખાસ જરૂર હતું - ViewBinding ચાલુ કરવા માટે
+    // ViewBinding ચાલુ છે
     buildFeatures {
         viewBinding = true
     }
@@ -45,7 +48,7 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    // Retrofit અને Networking (ગૂગલ શીટ માટે)
+    // Retrofit અને Networking (તમારા ૨૭ કેલેન્ડર માટે)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.10.1")
