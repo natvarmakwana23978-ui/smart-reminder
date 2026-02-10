@@ -2,43 +2,37 @@ package com.smart.reminder
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.smart.reminder.databinding.ItemCalendarDayBinding
 
 class MonthAdapter(
-    private val items: List<CalendarDayData>, // JsonObject ને બદલે આ ટાઈપ વાપરો
-    private val selectedLang: String
-) : RecyclerView.Adapter<MonthAdapter.MonthViewHolder>() {
+    private val dayList: List<CalendarDayData>,
+    private val langIndex: Int
+) : RecyclerView.Adapter<MonthAdapter.ViewHolder>() {
 
-    class MonthViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val tvDate: TextView = v.findViewById(R.id.tvEnglishDate)
-        val tvTithi: TextView = v.findViewById(R.id.tvTithi)
+    class ViewHolder(val binding: ItemCalendarDayBinding) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemCalendarDayBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MonthViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_day, parent, false)
-        return MonthViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: MonthViewHolder, position: Int) {
-        val day = items[position]
-        holder.tvDate.text = day.date
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val dayData = dayList[position]
         
-        // ભાષા મુજબ વિગત મેળવો
-        val tithi = day.details?.get(selectedLang)?.asString ?: ""
-        holder.tvTithi.text = tithi
+        holder.binding.txtDate.text = dayData.date
+        // 'details' ની ભૂલ અહીં સુધારી - dataList[langIndex] વાપરો
+        holder.binding.txtDetails.text = dayData.dataList.getOrNull(langIndex) ?: ""
+        holder.binding.txtFestival.text = "${dayData.emoji} ${dayData.festival}"
 
-        // રવિવાર અથવા રજા માટે લાલ રંગ
-        if (day.color_code == 1 || day.isSunday) {
-            holder.tvDate.setTextColor(Color.RED)
-            holder.tvTithi.setTextColor(Color.RED)
+        // રવિવાર અને કલર કોડ માટેનું લોજિક
+        if (dayData.religious.contains("Sunday", ignoreCase = true)) {
+            holder.binding.root.setBackgroundColor(Color.parseColor("#FFEBEE")) // આછો લાલ
         } else {
-            holder.tvDate.setTextColor(Color.BLACK)
-            holder.tvTithi.setTextColor(Color.GRAY)
+            holder.binding.root.setBackgroundColor(Color.WHITE)
         }
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = dayList.size
 }
