@@ -1,46 +1,19 @@
 package com.smart.reminder
-
-import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.smart.reminder.databinding.ItemCalendarDayBinding
 
-class CalendarAdapter(
-    private val items: List<CalendarDayData>,
-    private val selectedLang: String
-) : RecyclerView.Adapter<CalendarAdapter.DayViewHolder>() {
-
-    class DayViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val tvDate: TextView = v.findViewById(R.id.tvEnglishDate) // XML માં ID ચેક કરી લેવી
-        val tvTithi: TextView = v.findViewById(R.id.tvTithi)
+class CalendarAdapter(private val list: List<CalendarDayData>, private val langIndex: Int) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
+    class ViewHolder(val binding: ItemCalendarDayBinding) : RecyclerView.ViewHolder(binding.root)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(ItemCalendarDayBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DayViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_day, parent, false)
-        return DayViewHolder(view)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val item = list[position]
+        holder.binding.txtDate.text = item.date
+        holder.binding.txtDetails.text = item.dataList.getOrNull(langIndex) ?: ""
+        holder.binding.txtFestival.text = "${item.emoji} ${item.festival}"
     }
-
-    override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
-        val day = items[position]
-        holder.tvDate.text = day.date
-        
-        // ભાષા મુજબ વિગત બતાવો
-        val info = if (day.details?.has(selectedLang) == true) {
-            day.details.get(selectedLang).asString
-        } else { "" }
-        holder.tvTithi.text = info
-
-        // રજા હોય તો લાલ રંગ
-        if (day.color_code == 1 || day.isSunday) {
-            holder.tvDate.setTextColor(Color.RED)
-            holder.tvTithi.setTextColor(Color.RED)
-        } else {
-            holder.tvDate.setTextColor(Color.BLACK)
-            holder.tvTithi.setTextColor(Color.GRAY)
-        }
-    }
-
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = list.size
 }
